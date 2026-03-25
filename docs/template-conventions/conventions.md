@@ -26,6 +26,7 @@ Every template asks these questions:
 | `.gitignore` | Always included (language-specific content) |
 | `.env.example` | Included for all types except lib |
 | `justfile` | Always included |
+| Minimum release age | Always configured — only allow packages released at least 7 days ago |
 
 ## Justfile Targets
 
@@ -63,6 +64,17 @@ The following concerns must be kept consistent across ALL templates. When modify
 - CI/CD patterns — GitHub Actions, consistent workflow structure and naming
 - Docker conventions — base image selection, multi-stage build patterns, label schemas (service/web/agent types only)
 - Copier question naming — use the same variable names for the same concepts
+- Minimum release age — 7-day minimum across all package managers (see below)
+
+## Minimum Release Age
+
+All templates enforce a 7-day minimum release age for dependencies to reduce supply chain risk.
+
+| Package Manager | Config File | Setting |
+| --------------- | ----------- | ------- |
+| uv (Python) | `pyproject.toml` | `[tool.uv] exclude-newer = "1 week"` |
+| Bun (TS backend) | `bunfig.toml` | `minimumReleaseAge = 10080` |
+| pnpm (frontend/Next.js) | `pnpm-workspace.yaml` | `minimumReleaseAge: 10080` |
 
 ## Self-Containment
 

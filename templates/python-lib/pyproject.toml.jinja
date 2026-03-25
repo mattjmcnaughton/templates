@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ project_description }}"
+readme = "README.md"
+requires-python = ">=3.12"
+{% if license == "MIT" -%}
+license = "MIT"
+{% elif license == "Apache-2.0" -%}
+license = "Apache-2.0"
+{% elif license == "Proprietary" -%}
+license = { text = "Proprietary" }
+{% endif -%}
+authors = [
+    { name = "{{ author_name }}", email = "{{ author_email }}" },
+]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/{{ author_name }}/{{ project_name }}"
+
+[tool.uv]
+exclude-newer = "1 week"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "A", "SIM", "TCH"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "external: tests that hit external services",
+]

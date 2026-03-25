@@ -1,0 +1,33 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a Python library using a src layout.
+
+## Project Structure
+
+```
+src/{{ package_name }}/     # Library source code
+  __init__.py               # Package init, exposes __version__
+  py.typed                  # PEP 561 type stub marker
+tests/
+  unit/                     # Fast, isolated unit tests
+  integration/              # Tests with real dependencies
+  e2e/                      # End-to-end tests
+```
+
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+| uv | Package management, virtual environments |
+| hatchling | Build backend |
+| ruff | Formatting and linting |
+| ty | Type checking |
+| pytest | Testing |
+
+## Conventions
+
+- All configuration is in `pyproject.toml`.
+- Version is the single source of truth in `pyproject.toml`, read via `importlib.metadata`.
+- `py.typed` marker enables downstream type checking (PEP 561).
