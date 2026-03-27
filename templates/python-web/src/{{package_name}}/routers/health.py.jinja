@@ -1,0 +1,28 @@
+"""Health check endpoints."""
+
+from fastapi import APIRouter
+
+router = APIRouter(tags=["health"])
+
+
+@router.get("/healthz")
+async def healthz() -> dict:
+    """Liveness probe."""
+    return {"status": "ok"}
+
+
+@router.get("/readyz")
+async def readyz() -> dict:
+    """Readiness probe."""
+{%- if include_database %}
+    from sqlalchemy import text
+
+    from {{ package_name }}.db import async_session
+
+    try:
+        async with async_session() as session:
+            await session.execute(text("SELECT 1"))
+    except Exception:
+        return {"status": "not ready", "database": "unreachable"}
+{%- endif %}
+    return {"status": "ready"}
