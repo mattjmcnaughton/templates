@@ -1,0 +1,68 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a Python CLI using typer with a commands/services layered architecture.
+
+## Project Structure
+
+```
+src/{{ package_name }}/
+  cli.py               # Typer app, registers subcommands
+  config.py            # Pydantic-settings config from env vars
+  logging.py           # structlog setup
+  commands/            # Subcommand modules (thin I/O layer)
+  services/            # Business logic
+{%- if include_clients %}
+  clients/             # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.py                # Async engine/session factory
+  models/              # SQLAlchemy async models
+  repositories/        # Data access layer
+{%- endif %}
+tests/
+  unit/                # Fast, isolated unit tests
+  integration/         # Tests with real dependencies
+  e2e/                 # End-to-end tests
+```
+
+## Layering
+
+```
+CLI (typer commands)
+  -> Commands (parse args into COMMANDInput, format COMMANDOutput)
+    -> Services (business logic)
+{%- if include_clients %}
+      -> Clients (external API calls)
+{%- endif %}
+{%- if include_database %}
+      -> Repositories (data access)
+        -> Models (SQLAlchemy)
+{%- endif %}
+```
+
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+| uv | Package management, virtual environments |
+| hatchling | Build backend |
+| ruff | Formatting and linting |
+| ty | Type checking |
+| pytest | Testing |
+| typer | CLI framework |
+| structlog | Structured logging |
+| pydantic-settings | Configuration |
+{%- if include_database %}
+| SQLAlchemy | Async ORM |
+| Alembic | Database migrations |
+{%- endif %}
+
+## Conventions
+
+- All configuration is in `pyproject.toml`.
+- Version is the single source of truth in `pyproject.toml`, read via `importlib.metadata`.
+- `py.typed` marker enables downstream type checking (PEP 561).
+- Commands define `COMMANDInput` and `COMMANDOutput` dataclasses.
+- Commands are thin — they parse CLI args and delegate to services.

@@ -1,0 +1,16 @@
+"""CLI entry point for {{ project_name }}."""
+
+import typer
+
+from {{ package_name }}.commands.example import example
+from {{ package_name }}.logging import configure_logging
+
+app = typer.Typer(name="{{ project_name }}", help="{{ project_description }}")
+
+app.command()(example)
+
+
+@app.callback()
+def main() -> None:
+    """{{ project_description }}"""
+    configure_logging()

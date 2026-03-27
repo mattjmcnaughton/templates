@@ -1,0 +1,22 @@
+[project]
+name = "templates-tests"
+version = "0.0.0"
+description = "E2E tests for Copier templates"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-xdist>=3.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "python_lib: tests for the python-lib template",
+    "python_cli: tests for the python-cli template",
+    "python_service: tests for the python-service template",
+    "python_web: tests for the python-web template",
+    "python_agent: tests for the python-agent template",
+    "slow: tests that run uv sync and just gate in the generated project",
+]
