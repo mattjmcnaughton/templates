@@ -1,0 +1,59 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) 1.1+
+- [just](https://just.systems/)
+
+### Installation
+
+```sh
+bun install
+cp .env.example .env
+```
+
+### Running
+
+```sh
+{{ project_name }} greet "World"
+```
+
+## Development
+
+```sh
+# Check formatting and linting
+just fmt
+just lint
+
+# Fix formatting and linting
+just fmt-fix
+just lint-fix
+
+# Run type checker
+just typecheck
+```
+
+## Testing
+
+```sh
+# Run unit tests
+just test-unit
+
+# Run all tests
+just test-all
+
+# Full pre-push check
+just gate
+```
+
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md) for project structure and design decisions.
+
+## License
+
+[{{ license }}](LICENSE)

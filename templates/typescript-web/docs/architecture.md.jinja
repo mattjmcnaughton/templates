@@ -1,0 +1,59 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a full-stack web application using Next.js.
+
+## Project Structure
+
+```
+src/
+  app/                   # Next.js App Router
+    layout.tsx           # Root layout
+    page.tsx             # Home page
+    api/health/route.ts  # Health endpoint
+  components/            # React components
+{%- if include_shadcn %}
+    ui/                  # shadcn/ui components
+{%- endif %}
+  hooks/                 # Custom React hooks
+  lib/                   # Utilities and configuration
+    api.ts               # API client utilities
+    config.ts            # zod-based env/config validation
+    logging.ts           # pino setup
+    telemetry.ts         # OpenTelemetry setup
+  services/              # Business logic
+{%- if include_database %}
+  db.ts                  # Prisma client setup
+  repositories/          # Data access layer
+{%- endif %}
+tests/
+  unit/                  # Vitest unit tests
+  integration/           # Vitest integration tests
+  e2e/                   # Playwright e2e tests
+```
+
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+| Node.js | Runtime |
+| pnpm | Package manager |
+| Next.js | Full-stack React framework |
+| TypeScript | Type system |
+| Biome | Formatting and linting |
+| Tailwind CSS | Styling |
+| Vitest | Unit and integration testing |
+| Playwright | E2e testing |
+| OpenTelemetry | Distributed tracing |
+| pino | Structured logging |
+| zod | Config/env validation |
+{%- if include_database %}
+| Prisma | ORM and database access |
+{%- endif %}
+
+## Conventions
+
+- All configuration is in `package.json` and `tsconfig.json`.
+- Health endpoint is available at `/api/health`.
+- Strict TypeScript mode is enabled.

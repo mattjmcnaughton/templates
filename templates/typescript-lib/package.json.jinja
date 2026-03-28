@@ -1,0 +1,20 @@
+{
+  "name": "{{ project_name }}",
+  "version": "0.1.0",
+  "description": "{{ project_description }}",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc"
+  },
+  "author": "{{ author_name }} <{{ author_email }}>",
+  "license": "{{ license }}",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9",
+    "@types/bun": "^1.2",
+    "typescript": "^5.7"
+  }
+}

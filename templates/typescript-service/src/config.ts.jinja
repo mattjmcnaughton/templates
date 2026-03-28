@@ -1,0 +1,13 @@
+import { z } from "zod";
+
+const envSchema = z.object({
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  HOST: z.string().default("0.0.0.0"),
+  PORT: z.coerce.number().default(3000),
+  OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional(),
+{%- if include_database %}
+  DATABASE_URL: z.string(),
+{%- endif %}
+});
+
+export const config = envSchema.parse(process.env);

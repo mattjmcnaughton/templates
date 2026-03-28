@@ -1,0 +1,87 @@
+_min_copier_version: "9.0.0"
+_subdirectory: ""
+_templates_suffix: ".jinja"
+_tasks:
+  - "ln -sf CLAUDE.md AGENTS.md"
+
+# Project identity
+project_name:
+  type: str
+  help: Project name (used for directory, package, and repo name)
+
+project_description:
+  type: str
+  help: One-line project description
+
+author_name:
+  type: str
+  help: Author or organization name
+
+author_email:
+  type: str
+  help: Author contact email
+
+license:
+  type: str
+  help: Project license
+  default: MIT
+  choices:
+    MIT: MIT
+    Apache-2.0: Apache-2.0
+    Proprietary: Proprietary
+
+# Template-specific
+include_database:
+  type: bool
+  default: false
+  help: Include database support (Prisma)
+
+database_type:
+  type: str
+  help: Database type
+  default: postgres
+  choices:
+    postgres: postgres
+    sqlite: sqlite
+  when: "{{ include_database }}"
+
+include_shadcn:
+  type: bool
+  default: false
+  help: Include shadcn/ui component library
+
+include_zustand:
+  type: bool
+  default: false
+  help: Include zustand for client-side state management
+
+include_recharts:
+  type: bool
+  default: false
+  help: Include recharts for data visualization
+
+include_forms:
+  type: bool
+  default: false
+  help: Include react-hook-form + zod for form handling
+
+include_tables:
+  type: bool
+  default: false
+  help: Include @tanstack/react-table
+
+include_axios:
+  type: bool
+  default: false
+  help: Include axios HTTP client
+
+# Documentation options
+include_technical_docs:
+  type: bool
+  default: false
+  help: Create docs/technical/ for TDDs and technical specs
+
+include_product_docs:
+  type: bool
+  default: false
+  help: Create docs/product/ for PRDs and product briefs

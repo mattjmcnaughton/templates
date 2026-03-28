@@ -1,0 +1,91 @@
+# CLAUDE.md
+
+{{ project_description }}
+
+TypeScript agent using {{ agent_framework }}{% if execution_model == "cli" %}, commander, chalk{% else %}, {% if execution_model == "web" %}Next.js{% else %}Hono{% endif %}, OpenTelemetry{% endif %}, pino, zod, Biome, tsc, and {% if execution_model == "web" %}Vitest + Playwright{% else %}bun test{% endif %}.
+
+## Quick Reference
+
+| Command | Purpose |
+| ------- | ------- |
+| `just fmt` | Check formatting |
+| `just fmt-fix` | Fix formatting |
+| `just lint` | Check linting |
+| `just lint-fix` | Fix linting |
+| `just typecheck` | Run type checker |
+| `just test-unit` | Run unit tests |
+| `just test-integration` | Run integration tests |
+| `just test-e2e` | Run e2e tests |
+| `just test-all` | Run all tests |
+| `just test-external` | Run tests hitting external services |
+| `just gate` | Fast pre-push check (fmt + lint + typecheck + test-unit) |
+| `just gate-expensive` | Full check (gate + integration + e2e) |
+| `just gate-external` | Everything (gate-expensive + external) |
+{%- if execution_model != "cli" %}
+| `just dev` | Start dev server |
+{%- endif %}
+
+## Project Structure
+
+```
+src/
+  agents/                     # Agent definitions
+    example.ts                # Example agent ({{ agent_framework }})
+  tools/                      # Agent tools/functions
+{%- if execution_model == "cli" %}
+  index.ts                    # CLI entry point (commander)
+  commands/                   # CLI subcommands
+{%- elif execution_model == "service" %}
+  index.ts                    # Bun server entry point
+  app.ts                      # Hono app factory
+  telemetry.ts                # OpenTelemetry setup
+  routers/                    # HTTP endpoint definitions
+    health.ts                 # /healthz, /readyz
+  controllers/                # Request orchestration
+  dtos/                       # Zod request/response schemas
+{%- elif execution_model == "web" %}
+  app/                        # Next.js App Router
+    layout.tsx                # Root layout
+    page.tsx                  # Home page
+    api/health/route.ts       # Health endpoint
+  components/                 # React components
+  hooks/                      # Custom React hooks
+  lib/                        # Utilities and configuration
+{%- endif %}
+  config.ts                   # zod-based env/config validation
+  logging.ts                  # pino setup
+  services/                   # Business logic
+{%- if include_clients %}
+  clients/                    # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.ts                       # Prisma client setup
+  repositories/               # Data access layer
+{%- endif %}
+tests/
+  unit/                       # Unit tests
+  integration/                # Integration tests
+  e2e/                        # End-to-end tests
+```
+
+## Key Conventions
+
+- Source code lives in `src/`.
+- **Agents** live in `agents/`. Tools the agent can call go in `tools/`.
+{%- if execution_model == "cli" %}
+- **Commands** are thin I/O wrappers. Parse CLI args, call the agent, format output.
+{%- else %}
+- **Layering:** routers -> controllers -> services (agents live in services layer).
+- **DTOs** are zod schemas for API I/O, always separate from DB models.
+{%- endif %}
+- Tests are organized by type in `tests/unit/`, `tests/integration/`, `tests/e2e/`.
+- Use `external` in test names for tests that hit external services.
+- All config is in `package.json` and `tsconfig.json` — no separate config files.
+
+## More Information
+
+- `docs/architecture.md` — read before adding new modules or changing project structure
+- `docs/development.md` — read for environment setup, debugging, or common tasks
+{%- if execution_model != "cli" %}
+- `docs/api.md` — API endpoint reference
+{%- endif %}

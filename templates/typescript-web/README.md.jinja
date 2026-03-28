@@ -1,0 +1,83 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/)
+- [just](https://just.systems/)
+- [Docker](https://www.docker.com/) (for dependencies)
+
+### Installation
+
+```sh
+pnpm install
+cp .env.example .env
+```
+{% if include_database and database_type == "postgres" %}
+### Database
+
+```sh
+# Start Postgres
+docker compose up -d
+
+# Run migrations
+pnpm exec prisma migrate deploy
+```
+{% endif %}
+### Running
+
+```sh
+just dev
+```
+
+The app will be available at `http://localhost:3000`.
+
+## Development
+
+```sh
+# Check formatting and linting
+just fmt
+just lint
+
+# Fix formatting and linting
+just fmt-fix
+just lint-fix
+
+# Run type checker
+just typecheck
+```
+
+## Testing
+
+```sh
+# Run unit tests
+just test-unit
+
+# Run all tests
+just test-all
+
+# Full pre-push check
+just gate
+```
+
+## Deployment
+
+```sh
+# Build Docker image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 3000:3000 {{ project_name }}
+```
+
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md) for project structure and design decisions.
+
+## License
+
+[{{ license }}](LICENSE)

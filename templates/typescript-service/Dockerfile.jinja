@@ -1,0 +1,28 @@
+## Stage 1: Dependencies
+FROM oven/bun AS deps
+
+WORKDIR /app
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile --production
+
+## Stage 2: Build
+FROM deps AS build
+
+COPY . .
+
+## Stage 3: Production
+FROM oven/bun AS production
+
+LABEL org.opencontainers.image.title="{{ project_name }}"
+LABEL org.opencontainers.image.description="{{ project_description }}"
+
+RUN addgroup --gid 1000 app && adduser --uid 1000 --gid 1000 --disabled-password app
+
+WORKDIR /app
+COPY --from=build --chown=app:app /app /app
+
+USER app
+
+EXPOSE 3000
+
+CMD ["bun", "run", "src/index.ts"]

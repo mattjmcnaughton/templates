@@ -1,0 +1,87 @@
+_min_copier_version: "9.0.0"
+_subdirectory: ""
+_templates_suffix: ".jinja"
+_tasks:
+  - "ln -sf CLAUDE.md AGENTS.md"
+
+# Project identity
+project_name:
+  type: str
+  help: Project name (used for directory, package, and repo name)
+
+project_description:
+  type: str
+  help: One-line project description
+
+author_name:
+  type: str
+  help: Author or organization name
+
+author_email:
+  type: str
+  help: Author contact email
+
+license:
+  type: str
+  help: Project license
+  default: MIT
+  choices:
+    MIT: MIT
+    Apache-2.0: Apache-2.0
+    Proprietary: Proprietary
+
+# Agent-specific
+agent_framework:
+  type: str
+  help: Agent framework
+  default: claude-agent-sdk
+  choices:
+    claude-agent-sdk: claude-agent-sdk
+    pi-ai: pi-ai
+    langchain-js: langchain-js
+
+execution_model:
+  type: str
+  help: How the agent is executed
+  default: cli
+  choices:
+    cli: cli
+    service: service
+    web: web
+
+# Template-specific
+publish_to_npm:
+  type: bool
+  default: true
+  help: Include GitHub Actions workflow for publishing to npm
+  when: "{{ execution_model == 'cli' }}"
+
+include_database:
+  type: bool
+  default: false
+  help: Include database support (Prisma)
+
+database_type:
+  type: str
+  help: Database type
+  default: postgres
+  choices:
+    postgres: postgres
+    sqlite: sqlite
+  when: "{{ include_database }}"
+
+include_clients:
+  type: bool
+  default: false
+  help: Scaffold a clients/ module for external API/service clients
+
+# Documentation options
+include_technical_docs:
+  type: bool
+  default: false
+  help: Create docs/technical/ for TDDs and technical specs
+
+include_product_docs:
+  type: bool
+  default: false
+  help: Create docs/product/ for PRDs and product briefs

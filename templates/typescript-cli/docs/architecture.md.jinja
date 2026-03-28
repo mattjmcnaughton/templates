@@ -1,0 +1,64 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a TypeScript CLI application using commander.
+
+## Project Structure
+
+```
+src/
+  index.ts               # CLI entry point (commander)
+  config.ts              # zod-based env/config validation
+  logging.ts             # pino setup
+  commands/              # CLI subcommands
+    example.ts           # Example command
+  services/              # Business logic
+{%- if include_clients %}
+  clients/               # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.ts                  # Prisma client setup
+  repositories/          # Data access layer
+{%- endif %}
+tests/
+  unit/                  # Fast, isolated unit tests
+  integration/           # Tests with real dependencies
+  e2e/                   # End-to-end tests
+```
+
+## Flow
+
+```
+CLI commands (parse args, call services)
+  -> services (business logic)
+{%- if include_clients %}
+    -> clients (external API calls)
+{%- endif %}
+{%- if include_database %}
+    -> repositories (data access via Prisma)
+{%- endif %}
+```
+
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+| Bun | Runtime and package manager |
+| TypeScript | Type system |
+| Biome | Formatting and linting |
+| bun test | Testing |
+| commander | CLI framework |
+| chalk | Terminal styling |
+| pino | Structured logging |
+| zod | Config/env validation |
+{%- if include_database %}
+| Prisma | ORM and database access |
+{%- endif %}
+
+## Conventions
+
+- All configuration is in `package.json` and `tsconfig.json`.
+- Version is the single source of truth in `package.json`.
+- Commands are thin I/O wrappers; business logic lives in services.
+- Input/Output types use zod schemas.

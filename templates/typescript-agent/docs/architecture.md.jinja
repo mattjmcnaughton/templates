@@ -1,0 +1,113 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a TypeScript agent application using {{ agent_framework }}{% if execution_model != "cli" %} with a {% if execution_model == "web" %}Next.js{% else %}Hono{% endif %} backend{% endif %}.
+
+## Project Structure
+
+```
+src/
+  agents/              # Agent definitions
+    example.ts         # Example agent ({{ agent_framework }})
+  tools/               # Agent tools/functions
+{%- if execution_model == "cli" %}
+  index.ts             # CLI entry point (commander)
+  commands/            # CLI subcommands
+{%- elif execution_model == "service" %}
+  index.ts             # Bun server entry point
+  app.ts               # Hono app factory
+  telemetry.ts         # OpenTelemetry setup
+  routers/             # HTTP endpoint definitions
+    health.ts          # /healthz, /readyz
+  controllers/         # Request orchestration
+  dtos/                # Zod request/response schemas
+{%- elif execution_model == "web" %}
+  app/                 # Next.js App Router
+  components/          # React components
+  hooks/               # Custom React hooks
+  lib/                 # Utilities and configuration
+{%- endif %}
+  config.ts            # zod-based env/config validation
+  logging.ts           # pino setup
+  services/            # Business logic
+{%- if include_clients %}
+  clients/             # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.ts                # Prisma client setup
+  repositories/        # Data access layer
+{%- endif %}
+tests/
+  unit/                # Fast, isolated unit tests
+  integration/         # Tests with real dependencies
+  e2e/                 # End-to-end tests
+```
+{% if execution_model == "cli" %}
+## Flow
+
+```
+CLI commands (parse args, call agents)
+  -> agents ({{ agent_framework }}, orchestrate tools)
+    -> tools (functions the agent can call)
+    -> services (business logic)
+{%- if include_clients %}
+      -> clients (external API calls)
+{%- endif %}
+{%- if include_database %}
+      -> repositories (data access)
+{%- endif %}
+```
+{% else %}
+## Layering
+
+```
+routers (HTTP endpoints, validate with zod)
+  -> controllers (orchestrate across services/agents)
+    -> agents ({{ agent_framework }}, orchestrate tools)
+      -> tools (functions the agent can call)
+    -> services (business logic)
+{%- if include_clients %}
+      -> clients (external API calls)
+{%- endif %}
+{%- if include_database %}
+      -> repositories (data access via Prisma)
+{%- endif %}
+```
+
+DTOs (zod schemas) are used at the router and controller level for API I/O. They are always separate from database models.
+{% endif %}
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+{%- if execution_model == "web" %}
+| Node.js | Runtime |
+| pnpm | Package manager |
+| Next.js | Full-stack React framework |
+{%- else %}
+| Bun | Runtime and package manager |
+{%- endif %}
+| TypeScript | Type system |
+| Biome | Formatting and linting |
+{%- if execution_model == "web" %}
+| Vitest | Unit and integration testing |
+| Playwright | E2e testing |
+{%- else %}
+| bun test | Testing |
+{%- endif %}
+| {{ agent_framework }} | Agent framework |
+{%- if execution_model == "cli" %}
+| commander | CLI framework |
+| chalk | Terminal styling |
+{%- else %}
+{%- if execution_model == "service" %}
+| Hono | HTTP framework |
+{%- endif %}
+| OpenTelemetry | Distributed tracing |
+{%- endif %}
+| pino | Structured logging |
+| zod | Config/env validation |
+{%- if include_database %}
+| Prisma | ORM and database access |
+{%- endif %}

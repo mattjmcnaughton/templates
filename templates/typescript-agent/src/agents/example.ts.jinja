@@ -1,0 +1,49 @@
+import { z } from "zod";
+{% if agent_framework == "claude-agent-sdk" %}
+import { query, type ClaudeCodeOptions } from "claude-code-sdk";
+{% elif agent_framework == "pi-ai" %}
+import { Agent } from "@mariozechner/pi-agent-core";
+{% elif agent_framework == "langchain-js" %}
+import { ChatOpenAI } from "@langchain/openai";
+{% endif %}
+export const AgentInput = z.object({
+  prompt: z.string(),
+});
+
+export type AgentInput = z.infer<typeof AgentInput>;
+
+export const AgentOutput = z.object({
+  response: z.string(),
+});
+
+export type AgentOutput = z.infer<typeof AgentOutput>;
+{% if agent_framework == "claude-agent-sdk" %}
+export async function exampleAgent(input: AgentInput): Promise<AgentOutput> {
+  const messages = [];
+  for await (const message of query({
+    prompt: input.prompt,
+    options: { maxTurns: 1 } as ClaudeCodeOptions,
+  })) {
+    if (message.type === "text") {
+      messages.push(message.text);
+    }
+  }
+  return { response: messages.join("\n") };
+}
+{% elif agent_framework == "pi-ai" %}
+const agent = new Agent({
+  systemPrompt: "You are a helpful assistant.",
+});
+
+export async function exampleAgent(input: AgentInput): Promise<AgentOutput> {
+  const result = await agent.run(input.prompt);
+  return { response: result };
+}
+{% elif agent_framework == "langchain-js" %}
+const model = new ChatOpenAI({ modelName: "gpt-4o" });
+
+export async function exampleAgent(input: AgentInput): Promise<AgentOutput> {
+  const result = await model.invoke(input.prompt);
+  return { response: String(result.content) };
+}
+{% endif %}

@@ -27,14 +27,22 @@ def assert_files_absent(path: Path, absent: list[str]):
 
 
 def assert_no_raw_jinja(path: Path):
-    """Assert no raw Jinja artifacts in generated files."""
-    extensions = {".py", ".toml", ".yml", ".yaml", ".md", ".ini", ".cfg"}
+    """Assert no raw Jinja artifacts in generated files.
+
+    GitHub Actions workflow files are excluded because they legitimately
+    use ``${{ }}`` syntax which contains ``{{`` and ``}}``.
+    """
+    extensions = {".py", ".toml", ".yml", ".yaml", ".md", ".ini", ".cfg", ".ts", ".tsx", ".json", ".mjs", ".prisma"}
     for file in path.rglob("*"):
         if file.is_file() and file.suffix in extensions:
+            # Skip GitHub Actions workflows — they legitimately use ${{ }}
+            rel = file.relative_to(path)
+            if rel.parts[:2] == (".github", "workflows"):
+                continue
             content = file.read_text()
             for artifact in JINJA_ARTIFACTS:
                 assert artifact not in content, (
-                    f"Raw Jinja artifact '{artifact}' found in {file.relative_to(path)}"
+                    f"Raw Jinja artifact '{artifact}' found in {rel}"
                 )
 
 

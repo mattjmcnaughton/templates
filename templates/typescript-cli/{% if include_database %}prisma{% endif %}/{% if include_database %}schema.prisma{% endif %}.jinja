@@ -1,0 +1,12 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+{%- if database_type == "postgres" %}
+  provider = "postgresql"
+{%- else %}
+  provider = "sqlite"
+{%- endif %}
+  url      = env("DATABASE_URL")
+}

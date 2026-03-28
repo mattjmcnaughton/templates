@@ -1,0 +1,24 @@
+# API Reference
+
+## Health
+
+### GET /healthz
+
+Liveness probe.
+
+**Response:** `200 OK`
+
+```json
+{ "status": "ok" }
+```
+
+### GET /readyz
+
+Readiness probe.
+{%- if include_database %} Checks database connectivity.{%- endif %}
+
+**Response:** `200 OK` or `503 Service Unavailable`
+
+```json
+{ "status": "ok" }
+```

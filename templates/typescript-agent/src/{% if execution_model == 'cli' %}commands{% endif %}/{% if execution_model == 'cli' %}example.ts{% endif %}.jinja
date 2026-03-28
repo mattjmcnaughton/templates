@@ -1,0 +1,12 @@
+import { Command } from "commander";
+import chalk from "chalk";
+import { exampleAgent, AgentInput } from "../agents/example.js";
+
+export const exampleCommand = new Command("ask")
+  .description("Ask the agent a question")
+  .argument("<prompt>", "Prompt for the agent")
+  .action(async (prompt: string) => {
+    const input = AgentInput.parse({ prompt });
+    const output = await exampleAgent(input);
+    console.log(chalk.green(output.response));
+  });

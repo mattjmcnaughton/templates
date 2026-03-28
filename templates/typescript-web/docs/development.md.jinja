@@ -1,0 +1,80 @@
+# Development
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/)
+- [just](https://just.systems/)
+- [Docker](https://www.docker.com/) (for dependencies)
+
+## Setup
+
+```sh
+# Install dependencies
+pnpm install
+
+# Copy environment file
+cp .env.example .env
+```
+{% if include_database and database_type == "postgres" %}
+## Database
+
+```sh
+# Start Postgres
+docker compose up -d
+
+# Run migrations
+pnpm exec prisma migrate deploy
+
+# Generate Prisma client
+pnpm exec prisma generate
+```
+{% endif %}
+## Running Locally
+
+```sh
+just dev
+```
+
+The app will be available at `http://localhost:3000`.
+
+## Common Tasks
+
+```sh
+# Format and lint
+just fmt-fix
+just lint-fix
+
+# Type check
+just typecheck
+
+# Run tests
+just test-unit
+just test-all
+
+# Full pre-push check
+just gate
+
+# Full check including integration and e2e
+just gate-expensive
+```
+
+## Testing
+
+Tests are organized by type:
+
+- `tests/unit/` — Vitest, fast isolated tests
+- `tests/integration/` — Vitest, tests with real dependencies
+- `tests/e2e/` — Playwright, end-to-end browser tests
+
+Use `external` in test names for tests that hit external services. These run via `just test-external`.
+
+## Docker
+
+```sh
+# Build image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 3000:3000 {{ project_name }}
+```

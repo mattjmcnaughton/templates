@@ -1,0 +1,67 @@
+# CLAUDE.md
+
+{{ project_description }}
+
+TypeScript service using Bun, Hono, OpenTelemetry, pino, zod, Biome, tsc, and bun test.
+
+## Quick Reference
+
+| Command | Purpose |
+| ------- | ------- |
+| `just fmt` | Check formatting |
+| `just fmt-fix` | Fix formatting |
+| `just lint` | Check linting |
+| `just lint-fix` | Fix linting |
+| `just typecheck` | Run type checker |
+| `just test-unit` | Run unit tests |
+| `just test-integration` | Run integration tests |
+| `just test-e2e` | Run e2e tests |
+| `just test-all` | Run all tests |
+| `just test-external` | Run tests hitting external services |
+| `just gate` | Fast pre-push check (fmt + lint + typecheck + test-unit) |
+| `just gate-expensive` | Full check (gate + integration + e2e) |
+| `just gate-external` | Everything (gate-expensive + external) |
+| `just dev` | Start dev server |
+
+## Project Structure
+
+```
+src/
+  index.ts                    # Bun server entry point
+  app.ts                      # Hono app factory
+  config.ts                   # zod-based env/config validation
+  logging.ts                  # pino setup
+  telemetry.ts                # OpenTelemetry setup
+  routers/                    # HTTP endpoint definitions
+    health.ts                 # /healthz, /readyz
+  controllers/                # Request orchestration
+  services/                   # Business logic
+  dtos/                       # Zod request/response schemas
+{%- if include_clients %}
+  clients/                    # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.ts                       # Prisma client setup
+  repositories/               # Data access layer
+{%- endif %}
+tests/
+  unit/                       # Unit tests
+  integration/                # Integration tests
+  e2e/                        # End-to-end tests
+```
+
+## Key Conventions
+
+- Source code lives in `src/`.
+- **Layering:** routers -> controllers -> services.
+- **DTOs** are zod schemas for API I/O, always separate from DB models.
+- Health endpoints are always available at `/healthz` and `/readyz`.
+- Tests are organized by type in `tests/unit/`, `tests/integration/`, `tests/e2e/`.
+- Use `external` in test names for tests that hit external services.
+- Run locally with `bun --watch src/index.ts` or `just dev`.
+
+## More Information
+
+- `docs/architecture.md` — read before adding new modules or changing project structure
+- `docs/development.md` — read for environment setup, debugging, or common tasks
+- `docs/api.md` — API endpoint reference

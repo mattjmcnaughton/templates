@@ -1,0 +1,28 @@
+import { Command } from "commander";
+import chalk from "chalk";
+import { z } from "zod";
+
+const ExampleInput = z.object({
+  name: z.string(),
+});
+
+type ExampleInput = z.infer<typeof ExampleInput>;
+
+const ExampleOutput = z.object({
+  greeting: z.string(),
+});
+
+type ExampleOutput = z.infer<typeof ExampleOutput>;
+
+function runExample(input: ExampleInput): ExampleOutput {
+  return { greeting: `Hello, ${input.name}!` };
+}
+
+export const exampleCommand = new Command("greet")
+  .description("Greet someone by name")
+  .argument("<name>", "Name to greet")
+  .action((name: string) => {
+    const input = ExampleInput.parse({ name });
+    const output = runExample(input);
+    console.log(chalk.green(output.greeting));
+  });

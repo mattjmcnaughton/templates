@@ -1,0 +1,63 @@
+{
+  "name": "{{ project_name }}",
+  "version": "0.1.0",
+  "description": "{{ project_description }}",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "{{ author_name }} <{{ author_email }}>",
+  "license": "{{ license }}",
+  "dependencies": {
+    "next": "^15.0",
+    "react": "^19.0",
+    "react-dom": "^19.0",
+    "tailwindcss": "^3.4",
+    "postcss": "^8.4",
+    "autoprefixer": "^10.4",
+    "pino": "^9.6",
+    "zod": "^3.24",
+    "@opentelemetry/api": "^1.9",
+    "@opentelemetry/sdk-node": "^0.57",
+    "@opentelemetry/auto-instrumentations-node": "^0.56",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57"
+{%- if include_database %},
+    "@prisma/client": "^6.0"
+{%- endif %}
+{%- if include_shadcn %},
+    "@shadcn/ui": "^0.9"
+{%- endif %}
+{%- if include_zustand %},
+    "zustand": "^5.0"
+{%- endif %}
+{%- if include_recharts %},
+    "recharts": "^2.15"
+{%- endif %}
+{%- if include_forms %},
+    "react-hook-form": "^7.54",
+    "@hookform/resolvers": "^4.1"
+{%- endif %}
+{%- if include_tables %},
+    "@tanstack/react-table": "^8.20"
+{%- endif %}
+{%- if include_axios %},
+    "axios": "^1.7"
+{%- endif %}
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9",
+    "@types/node": "^22.0",
+    "@types/react": "^19.0",
+    "@types/react-dom": "^19.0",
+    "typescript": "^5.7",
+    "vitest": "^3.0",
+    "@vitejs/plugin-react": "^4.3",
+    "@testing-library/react": "^16.0",
+    "@playwright/test": "^1.49"
+{%- if include_database %},
+    "prisma": "^6.0"
+{%- endif %}
+  }
+}

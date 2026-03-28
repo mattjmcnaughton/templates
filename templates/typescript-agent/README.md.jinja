@@ -1,0 +1,109 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Getting Started
+
+### Prerequisites
+
+{%- if execution_model == "web" %}
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/)
+{%- else %}
+- [Bun](https://bun.sh/) 1.1+
+{%- endif %}
+- [just](https://just.systems/)
+{%- if execution_model != "cli" %}
+- [Docker](https://www.docker.com/) (for dependencies)
+{%- endif %}
+
+### Installation
+
+```sh
+{%- if execution_model == "web" %}
+pnpm install
+{%- else %}
+bun install
+{%- endif %}
+cp .env.example .env
+```
+{% if include_database and database_type == "postgres" %}
+### Database
+
+```sh
+# Start Postgres
+docker compose up -d
+
+# Run migrations
+{%- if execution_model == "web" %}
+pnpm exec prisma migrate deploy
+{%- else %}
+bunx prisma migrate deploy
+{%- endif %}
+```
+{% endif %}
+### Running
+{% if execution_model == "cli" %}
+```sh
+{{ project_name }} ask "Hello, agent!"
+```
+{% elif execution_model == "web" %}
+```sh
+just dev
+```
+
+The app will be available at `http://localhost:3000`.
+{% else %}
+```sh
+just dev
+```
+
+The API will be available at `http://localhost:3000`. Health check at `http://localhost:3000/healthz`.
+{% endif %}
+
+## Development
+
+```sh
+# Check formatting and linting
+just fmt
+just lint
+
+# Fix formatting and linting
+just fmt-fix
+just lint-fix
+
+# Run type checker
+just typecheck
+```
+
+## Testing
+
+```sh
+# Run unit tests
+just test-unit
+
+# Run all tests
+just test-all
+
+# Full pre-push check
+just gate
+```
+{% if execution_model != "cli" %}
+## Deployment
+
+```sh
+# Build Docker image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 3000:3000 {{ project_name }}
+```
+{% endif %}
+
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md) for project structure and design decisions.
+
+## License
+
+[{{ license }}](LICENSE)

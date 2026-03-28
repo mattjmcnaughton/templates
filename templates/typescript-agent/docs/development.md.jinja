@@ -1,0 +1,96 @@
+# Development
+
+## Prerequisites
+
+{%- if execution_model == "web" %}
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/)
+{%- else %}
+- [Bun](https://bun.sh/) 1.1+
+{%- endif %}
+- [just](https://just.systems/)
+{%- if execution_model != "cli" %}
+- [Docker](https://www.docker.com/) (for dependencies)
+{%- endif %}
+
+## Setup
+
+```sh
+# Install dependencies
+{%- if execution_model == "web" %}
+pnpm install
+{%- else %}
+bun install
+{%- endif %}
+
+# Copy environment file
+cp .env.example .env
+```
+{% if include_database and database_type == "postgres" %}
+## Database
+
+```sh
+# Start Postgres
+docker compose up -d
+
+# Run migrations
+{%- if execution_model == "web" %}
+pnpm exec prisma migrate deploy
+{%- else %}
+bunx prisma migrate deploy
+{%- endif %}
+```
+{% endif %}
+## Running Locally
+{% if execution_model == "cli" %}
+```sh
+{{ project_name }} ask "Hello, agent!"
+```
+{% else %}
+```sh
+just dev
+```
+
+The {% if execution_model == "web" %}app{% else %}API{% endif %} will be available at `http://localhost:3000`.
+{% endif %}
+## Common Tasks
+
+```sh
+# Format and lint
+just fmt-fix
+just lint-fix
+
+# Type check
+just typecheck
+
+# Run tests
+just test-unit
+just test-all
+
+# Full pre-push check
+just gate
+
+# Full check including integration and e2e
+just gate-expensive
+```
+
+## Testing
+
+Tests are organized by type:
+
+- `tests/unit/` — fast, isolated tests
+- `tests/integration/` — tests with real dependencies
+- `tests/e2e/` — end-to-end tests
+
+Use `external` in test names for tests that hit external services. These run via `just test-external`.
+{% if execution_model != "cli" %}
+## Docker
+
+```sh
+# Build image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 3000:3000 {{ project_name }}
+```
+{% endif %}

@@ -1,0 +1,25 @@
+import { Hono } from "hono";
+{%- if include_database %}
+import { prisma } from "../db.js";
+{%- endif %}
+
+const healthRouter = new Hono();
+
+healthRouter.get("/healthz", (c) => {
+  return c.json({ status: "ok" });
+});
+
+healthRouter.get("/readyz", async (c) => {
+{%- if include_database %}
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return c.json({ status: "ok" });
+  } catch {
+    return c.json({ status: "error", detail: "database unavailable" }, 503);
+  }
+{%- else %}
+  return c.json({ status: "ok" });
+{%- endif %}
+});
+
+export { healthRouter };

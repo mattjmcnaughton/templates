@@ -1,0 +1,57 @@
+# Development
+
+## Prerequisites
+
+- [Bun](https://bun.sh/) 1.1+
+- [just](https://just.systems/)
+
+## Setup
+
+```sh
+# Install dependencies
+bun install
+
+# Copy environment file
+cp .env.example .env
+```
+{% if include_database and database_type == "postgres" %}
+## Database
+
+```sh
+# Run migrations
+bunx prisma migrate deploy
+
+# Generate Prisma client
+bunx prisma generate
+```
+{% endif %}
+## Common Tasks
+
+```sh
+# Format and lint
+just fmt-fix
+just lint-fix
+
+# Type check
+just typecheck
+
+# Run tests
+just test-unit
+just test-all
+
+# Full pre-push check
+just gate
+
+# Full check including integration and e2e
+just gate-expensive
+```
+
+## Testing
+
+Tests are organized by type:
+
+- `tests/unit/` — fast, isolated tests
+- `tests/integration/` — tests with real dependencies
+- `tests/e2e/` — end-to-end tests
+
+Use `external` in test names for tests that hit external services. These run via `just test-external`.

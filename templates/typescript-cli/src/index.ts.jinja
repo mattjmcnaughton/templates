@@ -1,0 +1,12 @@
+#!/usr/bin/env bun
+import { Command } from "commander";
+import { exampleCommand } from "./commands/example.js";
+
+const program = new Command()
+  .name("{{ project_name }}")
+  .description("{{ project_description }}")
+  .version("0.1.0");
+
+program.addCommand(exampleCommand);
+
+program.parse();

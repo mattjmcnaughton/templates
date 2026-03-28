@@ -1,0 +1,36 @@
+{
+  "name": "{{ project_name }}",
+  "version": "0.1.0",
+  "description": "{{ project_description }}",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "{{ project_name }}": "dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc"
+  },
+  "author": "{{ author_name }} <{{ author_email }}>",
+  "license": "{{ license }}",
+  "dependencies": {
+    "chalk": "^5.4",
+    "commander": "^13.0",
+    "pino": "^9.6",
+    "pino-pretty": "^13.0",
+    "zod": "^3.24"
+{%- if include_database %},
+    "@prisma/client": "^6.0"
+{%- endif %}
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9",
+    "@types/bun": "^1.2",
+    "typescript": "^5.7"
+{%- if include_database %},
+    "prisma": "^6.0"
+{%- endif %}
+  }
+}

@@ -1,0 +1,31 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a TypeScript library.
+
+## Project Structure
+
+```
+src/
+  index.ts               # Package entry point, exports public API
+tests/
+  unit/                  # Fast, isolated unit tests
+  integration/           # Tests with real dependencies
+  e2e/                   # End-to-end tests
+```
+
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+| Bun | Runtime and package manager |
+| TypeScript | Type system |
+| Biome | Formatting and linting |
+| bun test | Testing |
+
+## Conventions
+
+- All configuration is in `package.json` and `tsconfig.json`.
+- Version is the single source of truth in `package.json`.
+- Strict TypeScript mode is enabled.

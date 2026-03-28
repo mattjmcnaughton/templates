@@ -1,0 +1,68 @@
+# CLAUDE.md
+
+{{ project_description }}
+
+TypeScript web application using Next.js, React, Tailwind CSS, pnpm, Biome, tsc, Vitest, and Playwright.
+
+## Quick Reference
+
+| Command | Purpose |
+| ------- | ------- |
+| `just fmt` | Check formatting |
+| `just fmt-fix` | Fix formatting |
+| `just lint` | Check linting |
+| `just lint-fix` | Fix linting |
+| `just typecheck` | Run type checker |
+| `just test-unit` | Run unit tests |
+| `just test-integration` | Run integration tests |
+| `just test-e2e` | Run e2e tests (Playwright) |
+| `just test-all` | Run all tests |
+| `just test-external` | Run tests hitting external services |
+| `just gate` | Fast pre-push check (fmt + lint + typecheck + test-unit) |
+| `just gate-expensive` | Full check (gate + integration + e2e) |
+| `just gate-external` | Everything (gate-expensive + external) |
+| `just dev` | Start Next.js dev server |
+
+## Project Structure
+
+```
+src/
+  app/                        # Next.js App Router
+    layout.tsx                # Root layout
+    page.tsx                  # Home page
+    api/health/route.ts       # Health endpoint
+  components/                 # React components
+{%- if include_shadcn %}
+    ui/                       # shadcn/ui components
+{%- endif %}
+  hooks/                      # Custom React hooks
+  lib/                        # Utilities and configuration
+    api.ts                    # API client utilities
+    config.ts                 # zod-based env/config validation
+    logging.ts                # pino setup
+    telemetry.ts              # OpenTelemetry setup
+  services/                   # Business logic
+{%- if include_database %}
+  db.ts                       # Prisma client setup
+  repositories/               # Data access layer
+{%- endif %}
+tests/
+  unit/                       # Vitest unit tests
+  integration/                # Vitest integration tests
+  e2e/                        # Playwright e2e tests
+```
+
+## Key Conventions
+
+- Source code lives in `src/`.
+- Uses Next.js App Router for routing and API routes.
+- Health endpoint is available at `/api/health`.
+- Tests are organized by type in `tests/unit/`, `tests/integration/`, `tests/e2e/`.
+- Use `external` in test names for tests that hit external services.
+- All config is in `package.json` and `tsconfig.json` — no separate config files.
+- Run locally with `pnpm next dev` or `just dev`.
+
+## More Information
+
+- `docs/architecture.md` — read before adding new modules or changing project structure
+- `docs/development.md` — read for environment setup, debugging, or common tasks

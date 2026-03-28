@@ -18,5 +18,10 @@ markers = [
     "python_service: tests for the python-service template",
     "python_web: tests for the python-web template",
     "python_agent: tests for the python-agent template",
+    "typescript_lib: tests for the typescript-lib template",
+    "typescript_cli: tests for the typescript-cli template",
+    "typescript_service: tests for the typescript-service template",
+    "typescript_web: tests for the typescript-web template",
+    "typescript_agent: tests for the typescript-agent template",
     "slow: tests that run uv sync and just gate in the generated project",
 ]

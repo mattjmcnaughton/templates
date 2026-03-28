@@ -1,0 +1,90 @@
+{
+  "name": "{{ project_name }}",
+  "version": "0.1.0",
+  "description": "{{ project_description }}",
+{%- if execution_model == "web" %}
+  "private": true,
+{%- endif %}
+  "type": "module",
+{%- if execution_model == "cli" %}
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "{{ project_name }}": "dist/index.js"
+  },
+  "files": ["dist"],
+{%- elif execution_model == "service" %}
+  "main": "src/index.ts",
+{%- endif %}
+  "scripts": {
+{%- if execution_model == "cli" %}
+    "build": "tsc",
+    "prepublishOnly": "tsc"
+{%- elif execution_model == "service" %}
+    "dev": "bun --watch src/index.ts"
+{%- elif execution_model == "web" %}
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+{%- endif %}
+  },
+  "author": "{{ author_name }} <{{ author_email }}>",
+  "license": "{{ license }}",
+  "dependencies": {
+    "pino": "^9.6",
+    "zod": "^3.24"
+{%- if execution_model == "cli" %},
+    "pino-pretty": "^13.0",
+    "commander": "^13.0",
+    "chalk": "^5.4"
+{%- elif execution_model == "service" %},
+    "pino-pretty": "^13.0",
+    "hono": "^4.7",
+    "@opentelemetry/api": "^1.9",
+    "@opentelemetry/sdk-node": "^0.57",
+    "@opentelemetry/auto-instrumentations-node": "^0.56",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57"
+{%- elif execution_model == "web" %},
+    "next": "^15.0",
+    "react": "^19.0",
+    "react-dom": "^19.0",
+    "tailwindcss": "^3.4",
+    "postcss": "^8.4",
+    "autoprefixer": "^10.4",
+    "@opentelemetry/api": "^1.9",
+    "@opentelemetry/sdk-node": "^0.57",
+    "@opentelemetry/auto-instrumentations-node": "^0.56",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57"
+{%- endif %}
+{%- if agent_framework == "claude-agent-sdk" %},
+    "claude-code-sdk": "^1.0"
+{%- elif agent_framework == "pi-ai" %},
+    "@mariozechner/pi-ai": "^0.1",
+    "@mariozechner/pi-agent-core": "^0.1"
+{%- elif agent_framework == "langchain-js" %},
+    "@langchain/core": "^0.3",
+    "langchain": "^0.3"
+{%- endif %}
+{%- if include_database %},
+    "@prisma/client": "^6.0"
+{%- endif %}
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9",
+    "typescript": "^5.7"
+{%- if execution_model == "web" %},
+    "@types/node": "^22.0",
+    "@types/react": "^19.0",
+    "@types/react-dom": "^19.0",
+    "vitest": "^3.0",
+    "@vitejs/plugin-react": "^4.3",
+    "@testing-library/react": "^16.0",
+    "@playwright/test": "^1.49"
+{%- else %},
+    "@types/bun": "^1.2"
+{%- endif %}
+{%- if include_database %},
+    "prisma": "^6.0"
+{%- endif %}
+  }
+}

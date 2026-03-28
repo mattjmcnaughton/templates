@@ -1,0 +1,69 @@
+# Architecture
+
+## Overview
+
+{{ project_name }} is a TypeScript service using Hono with a Bun runtime.
+
+## Project Structure
+
+```
+src/
+  index.ts               # Bun server entry point
+  app.ts                 # Hono app factory
+  config.ts              # zod-based env/config validation
+  logging.ts             # pino setup
+  telemetry.ts           # OpenTelemetry setup
+  routers/               # HTTP endpoint definitions
+    health.ts            # /healthz, /readyz
+  controllers/           # Request orchestration
+  services/              # Business logic
+  dtos/                  # Zod request/response schemas
+{%- if include_clients %}
+  clients/               # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.ts                  # Prisma client setup
+  repositories/          # Data access layer
+{%- endif %}
+tests/
+  unit/                  # Fast, isolated unit tests
+  integration/           # Tests with real dependencies
+  e2e/                   # End-to-end tests
+```
+
+## Layering
+
+```
+routers (HTTP endpoints, validate with zod)
+  -> controllers (orchestrate across services)
+    -> services (business logic, framework-agnostic)
+{%- if include_clients %}
+      -> clients (external API calls)
+{%- endif %}
+{%- if include_database %}
+      -> repositories (data access via Prisma)
+{%- endif %}
+```
+
+DTOs (zod schemas) are used at the router and controller level for API I/O. They are always separate from database models.
+
+## Toolchain
+
+| Tool | Purpose |
+| ---- | ------- |
+| Bun | Runtime and package manager |
+| TypeScript | Type system |
+| Biome | Formatting and linting |
+| bun test | Testing |
+| Hono | HTTP framework |
+| OpenTelemetry | Distributed tracing |
+| pino | Structured logging |
+| zod | Config/env validation and DTOs |
+{%- if include_database %}
+| Prisma | ORM and database access |
+{%- endif %}
+
+## Conventions
+
+- All configuration is in `package.json` and `tsconfig.json`.
+- Health endpoints are always available at `/healthz` and `/readyz`.

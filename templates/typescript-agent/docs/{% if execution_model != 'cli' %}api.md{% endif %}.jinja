@@ -1,0 +1,25 @@
+# API Reference
+
+## Health
+{% if execution_model == "web" %}
+### GET /api/health
+{% else %}
+### GET /healthz
+
+Liveness probe.
+
+**Response:** `200 OK`
+
+```json
+{ "status": "ok" }
+```
+
+### GET /readyz
+{% endif %}
+Readiness probe.
+
+**Response:** `200 OK`
+
+```json
+{ "status": "ok" }
+```
