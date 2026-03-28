@@ -1,0 +1,25 @@
+"""CLI entry point for {{ project_name }}."""
+
+import asyncio
+
+import typer
+
+from {{ package_name }}.agents.example import run_agent
+from {{ package_name }}.logging import configure_logging
+
+app = typer.Typer(name="{{ project_name }}", help="{{ project_description }}")
+
+
+@app.command()
+def ask(
+    prompt: str = typer.Argument(help="Prompt to send to the agent"),
+) -> None:
+    """Run the agent with a prompt."""
+    result = asyncio.run(run_agent(prompt))
+    typer.echo(result)
+
+
+@app.callback()
+def main() -> None:
+    """{{ project_description }}"""
+    configure_logging()

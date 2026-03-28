@@ -1,0 +1,105 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/)
+- [just](https://just.systems/)
+{% if execution_model != "cli" -%}
+- [Docker](https://www.docker.com/) (for dependencies)
+{% endif -%}
+{% if execution_model == "web" -%}
+- [Node.js](https://nodejs.org/) 20+ and [pnpm](https://pnpm.io/) (for frontend)
+{% endif %}
+### Installation
+
+```sh
+uv sync --dev
+cp .env.example .env
+```
+{% if include_database and database_type == "postgres" %}
+### Database
+
+```sh
+# Start Postgres
+docker compose up -d
+
+# Run migrations
+uv run alembic upgrade head
+```
+{% endif %}
+### Running
+{% if execution_model == "cli" %}
+```sh
+{{ project_name }} ask "Hello, agent!"
+```
+{% elif execution_model == "web" %}
+```sh
+# Start both backend and frontend dev servers
+just dev
+
+# Or start separately
+just dev-be   # Backend only
+just dev-fe   # Frontend only
+```
+{% else %}
+```sh
+uv run uvicorn {{ package_name }}.app:app --reload
+```
+{% endif %}
+
+## Development
+
+```sh
+# Check formatting and linting
+just fmt
+just lint
+
+# Fix formatting and linting
+just fmt-fix
+just lint-fix
+
+# Run type checker
+just typecheck
+```
+
+## Testing
+
+```sh
+# Run unit tests
+just test-unit
+
+# Run all tests
+just test-all
+
+# Full pre-push check
+just gate
+```
+{% if execution_model != "cli" %}
+## Deployment
+
+```sh
+# Build Docker image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 8000:8000 {{ project_name }}
+```
+{% endif %}
+
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md) for project structure and design decisions.
+{% if execution_model != "cli" %}
+## API
+
+See [docs/api.md](docs/api.md) for endpoint reference.
+{% endif %}
+
+## License
+
+[{{ license }}](LICENSE)

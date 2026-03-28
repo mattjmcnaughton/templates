@@ -1,0 +1,36 @@
+# Frontend
+
+This directory is a placeholder for the frontend application.
+
+## Setup
+
+Use the [frontend-react](https://github.com/{{ author_name }}/templates) Copier template to scaffold a React frontend into this directory:
+
+```sh
+copier copy --trust path/to/templates/frontend-react src/{{ package_name }}/web/frontend
+```
+
+## Development
+
+After scaffolding, the frontend dev server runs independently:
+
+```sh
+# Start backend
+just dev-be
+
+# Start frontend (in a separate terminal)
+just dev-fe
+
+# Or start both
+just dev
+```
+
+## Production
+
+Build the frontend for production:
+
+```sh
+cd src/{{ package_name }}/web/frontend && pnpm run build
+```
+
+The built files in `dist/` are served by FastAPI via `web/serve.py`.

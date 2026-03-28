@@ -1,0 +1,22 @@
+"""Application configuration via environment variables."""
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    """Application settings loaded from environment variables."""
+
+    log_level: str = "INFO"
+{% if execution_model != "cli" %}
+    host: str = "0.0.0.0"
+    port: int = 8000
+    otel_exporter_otlp_endpoint: str | None = None
+{% endif %}
+{% if include_database %}
+    database_url: str = "{{ 'sqlite+aiosqlite:///./data.db' if database_type == 'sqlite' else 'postgresql+asyncpg://localhost:5432/' + project_name | lower | replace('-', '_') | replace(' ', '_') }}"
+{% endif %}
+
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+
+
+settings = Settings()

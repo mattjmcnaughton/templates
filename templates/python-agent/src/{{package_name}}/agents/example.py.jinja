@@ -1,0 +1,48 @@
+"""Example agent demonstrating the agent pattern."""
+{% if agent_framework == "pydantic-ai" %}
+from dataclasses import dataclass
+
+from pydantic_ai import Agent
+
+
+@dataclass
+class AgentDeps:
+    """Dependencies injected into the agent at runtime."""
+
+
+agent = Agent(
+    "openai:gpt-4o",
+    deps_type=AgentDeps,
+    system_prompt="You are a helpful assistant.",
+)
+
+
+async def run_agent(prompt: str) -> str:
+    """Run the example agent with the given prompt."""
+    result = await agent.run(prompt, deps=AgentDeps())
+    return result.output
+{% elif agent_framework == "claude-agent-sdk" %}
+from claude_code_sdk import query, ClaudeCodeOptions
+
+
+async def run_agent(prompt: str) -> str:
+    """Run the example agent with the given prompt."""
+    result = []
+    async for event in query(
+        prompt=prompt,
+        options=ClaudeCodeOptions(max_turns=3),
+    ):
+        if event.type == "result":
+            result.append(event.result)
+    return "\n".join(result) if result else ""
+{% elif agent_framework == "langchain" %}
+from langchain.chat_models import init_chat_model
+from langchain_core.messages import HumanMessage
+
+
+async def run_agent(prompt: str) -> str:
+    """Run the example agent with the given prompt."""
+    model = init_chat_model("gpt-4o", model_provider="openai")
+    response = await model.ainvoke([HumanMessage(content=prompt)])
+    return str(response.content)
+{% endif %}

@@ -1,0 +1,107 @@
+# Development
+
+## Prerequisites
+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/)
+- [just](https://just.systems/)
+{% if execution_model != "cli" -%}
+- [Docker](https://www.docker.com/) (for dependencies)
+{% endif -%}
+{% if execution_model == "web" -%}
+- [Node.js](https://nodejs.org/) 20+ and [pnpm](https://pnpm.io/) (for frontend)
+{% endif %}
+## Setup
+
+```sh
+# Install dependencies
+uv sync --dev
+
+# Copy environment file
+cp .env.example .env
+```
+{% if execution_model == "web" %}
+## Frontend Scaffolding
+
+The frontend is scaffolded separately using the `frontend-react` Copier template:
+
+```sh
+copier copy --trust path/to/templates/frontend-react src/{{ package_name }}/web/frontend
+```
+{% endif %}
+{% if include_database and database_type == "postgres" %}
+## Database
+
+```sh
+# Start Postgres
+docker compose up -d
+
+# Run migrations
+uv run alembic upgrade head
+```
+{% endif %}
+## Running Locally
+{% if execution_model == "cli" %}
+```sh
+{{ project_name }} ask "Hello, agent!"
+```
+{% elif execution_model == "web" %}
+```sh
+# Start both dev servers
+just dev
+
+# Or start separately
+just dev-be   # Backend at http://localhost:8000
+just dev-fe   # Frontend dev server
+```
+
+The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
+{% else %}
+```sh
+uv run uvicorn {{ package_name }}.app:app --reload
+```
+
+The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
+{% endif %}
+
+## Common Tasks
+
+```sh
+# Format and lint
+just fmt-fix
+just lint-fix
+
+# Type check
+just typecheck
+
+# Run tests
+just test-unit
+just test-all
+
+# Full pre-push check
+just gate
+
+# Full check including integration and e2e
+just gate-expensive
+```
+
+## Testing
+
+Tests are organized by type:
+
+- `tests/unit/` — fast, isolated tests
+- `tests/integration/` — tests with real dependencies
+- `tests/e2e/` — end-to-end tests
+
+Use `@pytest.mark.external` for tests that hit external services. These run via `just test-external`.
+{% if execution_model != "cli" %}
+## Docker
+
+```sh
+# Build image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 8000:8000 {{ project_name }}
+```
+{% endif %}

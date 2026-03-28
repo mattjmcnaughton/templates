@@ -1,0 +1,110 @@
+# CLAUDE.md
+
+{{ project_description }}
+
+Python agent using {{ agent_framework }}{% if execution_model == "cli" %}, typer{% else %}, FastAPI, uvicorn, OpenTelemetry{% endif %}, uv, ruff, ty, and pytest.
+
+## Quick Reference
+
+| Command | Purpose |
+| ------- | ------- |
+{% if execution_model == "web" -%}
+| `just fmt` | Check formatting (backend + frontend) |
+| `just fmt-fix` | Fix formatting (backend + frontend) |
+| `just lint` | Check linting (backend + frontend) |
+| `just lint-fix` | Fix linting (backend + frontend) |
+| `just typecheck` | Run type checker (backend + frontend) |
+| `just test-unit` | Run unit tests (backend + frontend) |
+{% else -%}
+| `just fmt` | Check formatting |
+| `just fmt-fix` | Fix formatting |
+| `just lint` | Check linting |
+| `just lint-fix` | Fix linting |
+| `just typecheck` | Run type checker |
+| `just test-unit` | Run unit tests |
+{% endif -%}
+| `just test-integration` | Run integration tests |
+| `just test-e2e` | Run e2e tests |
+| `just test-all` | Run all tests |
+| `just test-external` | Run tests hitting external services |
+| `just gate` | Fast pre-push check (fmt + lint + typecheck + test-unit) |
+| `just gate-expensive` | Full check (gate + integration + e2e) |
+| `just gate-external` | Everything (gate-expensive + external) |
+{% if execution_model == "web" -%}
+| `just dev` | Start backend and frontend dev servers |
+| `just dev-be` | Start backend dev server only |
+| `just dev-fe` | Start frontend dev server only |
+{% elif execution_model == "service" -%}
+| `just dev` | Start dev server |
+{% endif %}
+{% if execution_model == "web" %}
+All formatting, linting, typecheck, test-unit, and gate targets have `-be` and `-fe` variants (e.g. `just fmt-be`, `just fmt-fe`).
+{% endif %}
+## Project Structure
+
+```
+src/{{ package_name }}/
+  agents/                   # Agent definitions
+    example.py              # Example agent ({{ agent_framework }})
+  tools/                    # Agent tools/functions
+{%- if execution_model == "cli" %}
+  cli.py                    # Typer CLI entry point
+  commands/                 # CLI subcommands
+{%- else %}
+  app.py                    # FastAPI app factory
+  telemetry.py              # OpenTelemetry setup
+  routers/                  # HTTP endpoint definitions
+    health.py               # /healthz, /readyz
+  controllers/              # Request orchestration
+  dtos/                     # Pydantic request/response models
+{%- endif %}
+{%- if execution_model == "web" %}
+  web/                      # Frontend integration
+    serve.py                # Static file serving for production
+    frontend/               # Frontend application (scaffolded separately)
+{%- endif %}
+  config.py                 # Pydantic-settings based config
+  logging.py                # structlog setup
+  services/                 # Business logic
+{%- if include_clients %}
+  clients/                  # External API/service clients
+{%- endif %}
+{%- if include_database %}
+  db.py                     # Async engine/session setup
+  models/                   # SQLAlchemy models
+  repositories/             # Data access layer
+{%- endif %}
+tests/
+  unit/                     # Unit tests
+  integration/              # Integration tests
+  e2e/                      # End-to-end tests
+```
+
+## Key Conventions
+
+- Source code lives in `src/{{ package_name }}/` (src layout).
+- **Agents** live in `agents/`. Tools the agent can call go in `tools/`.
+{%- if execution_model == "cli" %}
+- **Commands** are thin I/O wrappers. Parse CLI args, call the agent, format output.
+{%- else %}
+- **Layering:** routers -> controllers -> services (agents live in services layer).
+- **DTOs** are Pydantic models for API I/O, always separate from DB models.
+{%- endif %}
+- Tests are organized by type in `tests/unit/`, `tests/integration/`, `tests/e2e/`.
+- Use `@pytest.mark.external` for tests that hit external services.
+- All config is in `pyproject.toml` — no separate config files.
+{%- if execution_model == "cli" %}
+- Version is defined in `pyproject.toml` and read via `importlib.metadata`.
+{%- elif execution_model == "web" %}
+- Backend: `just dev-be`. Frontend: `just dev-fe`. Both: `just dev`.
+{%- else %}
+- Run locally with `uv run uvicorn {{ package_name }}.app:app --reload`.
+{%- endif %}
+
+## More Information
+
+- `docs/architecture.md` — read before adding new modules or changing project structure
+- `docs/development.md` — read for environment setup, debugging, or common tasks
+{%- if execution_model != "cli" %}
+- `docs/api.md` — API endpoint reference
+{%- endif %}
