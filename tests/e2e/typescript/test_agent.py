@@ -250,7 +250,7 @@ class TestLangchainWeb:
 
     def test_dockerfile_node(self):
         content = (self.dest / "Dockerfile").read_text()
-        assert "node:lts-slim" in content
+        assert "node:22-slim" in content
 
     def test_env_has_api_key(self):
         content = (self.dest / ".env.example").read_text()

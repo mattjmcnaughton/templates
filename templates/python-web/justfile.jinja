@@ -9,7 +9,7 @@ fmt-be:
 
 # Check frontend formatting
 fmt-fe:
-    cd {{fe_dir}} && pnpm run fmt
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run fmt
 
 # Fix formatting (backend + frontend)
 fmt-fix: fmt-fix-be fmt-fix-fe
@@ -20,7 +20,7 @@ fmt-fix-be:
 
 # Fix frontend formatting
 fmt-fix-fe:
-    cd {{fe_dir}} && pnpm run fmt-fix
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run fmt-fix
 
 # Check linting (backend + frontend)
 lint: lint-be lint-fe
@@ -31,7 +31,7 @@ lint-be:
 
 # Check frontend linting
 lint-fe:
-    cd {{fe_dir}} && pnpm run lint
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run lint
 
 # Fix linting (backend + frontend)
 lint-fix: lint-fix-be lint-fix-fe
@@ -42,7 +42,7 @@ lint-fix-be:
 
 # Fix frontend linting
 lint-fix-fe:
-    cd {{fe_dir}} && pnpm run lint-fix
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run lint-fix
 
 # Run type checker (backend + frontend)
 typecheck: typecheck-be typecheck-fe
@@ -53,7 +53,7 @@ typecheck-be:
 
 # Run frontend type checker
 typecheck-fe:
-    cd {{fe_dir}} && pnpm run typecheck
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run typecheck
 
 # Run all tests
 test-all: test-unit test-integration test-e2e
@@ -67,7 +67,7 @@ test-unit-be:
 
 # Run frontend unit tests
 test-unit-fe:
-    cd {{fe_dir}} && pnpm run test
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run test
 
 # Run integration tests
 test-integration:
@@ -102,7 +102,7 @@ dev-be:
 
 # Start frontend dev server
 dev-fe:
-    cd {{fe_dir}} && pnpm run dev
+    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run dev
 
 # Start both dev servers
 dev:

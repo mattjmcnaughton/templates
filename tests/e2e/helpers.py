@@ -33,14 +33,19 @@ def assert_no_raw_jinja(path: Path):
     use ``${{ }}`` syntax which contains ``{{`` and ``}}``.
     """
     extensions = {".py", ".toml", ".yml", ".yaml", ".md", ".ini", ".cfg", ".ts", ".tsx", ".json", ".mjs", ".prisma"}
+    extensionless_check = {"justfile", "Dockerfile", "Makefile", "Procfile"}
     for file in path.rglob("*"):
-        if file.is_file() and file.suffix in extensions:
+        if file.is_file() and (file.suffix in extensions or file.name in extensionless_check):
             # Skip GitHub Actions workflows — they legitimately use ${{ }}
             rel = file.relative_to(path)
             if rel.parts[:2] == (".github", "workflows"):
                 continue
             content = file.read_text()
-            for artifact in JINJA_ARTIFACTS:
+            # Justfiles legitimately use {{ }} for variable interpolation
+            artifacts = JINJA_ARTIFACTS
+            if file.name == "justfile":
+                artifacts = [a for a in artifacts if a not in ("{{", "}}")]
+            for artifact in artifacts:
                 assert artifact not in content, (
                     f"Raw Jinja artifact '{artifact}' found in {rel}"
                 )

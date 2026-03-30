@@ -83,7 +83,7 @@ class TestMinimal:
 
     def test_dockerfile_node(self):
         content = (self.dest / "Dockerfile").read_text()
-        assert "node:lts-slim" in content
+        assert "node:22-slim" in content
 
     def test_docker_compose_empty(self):
         content = (self.dest / "docker-compose.yml").read_text()

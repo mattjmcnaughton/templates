@@ -12,3 +12,6 @@ uv.lock
 
 # OS
 .DS_Store
+
+.agentic-wip
+.worktrees

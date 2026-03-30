@@ -1,6 +1,7 @@
 """Health check endpoints."""
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 router = APIRouter(tags=["health"])
 
@@ -23,6 +24,6 @@ async def readyz() -> dict:
         async with async_session() as session:
             await session.execute(text("SELECT 1"))
     except Exception:
-        return {"status": "not ready", "database": "unreachable"}
+        return JSONResponse({"status": "not ready", "database": "unreachable"}, status_code=503)
 {%- endif %}
     return {"status": "ready"}

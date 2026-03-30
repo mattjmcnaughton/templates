@@ -37,10 +37,17 @@ dependencies = [
 {{ project_name }} = "{{ package_name }}.cli:app"
 
 [project.urls]
-Repository = "https://github.com/{{ author_name }}/{{ project_name }}"
+Repository = "https://github.com/{{ author_name | lower | replace(' ', '-') }}/{{ project_name }}"
 
 [tool.uv]
 exclude-newer = "1 week"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8",
+    "ty>=0.12",
+]
 
 [tool.ruff]
 target-version = "py312"

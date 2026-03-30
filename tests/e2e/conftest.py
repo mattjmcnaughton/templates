@@ -82,18 +82,3 @@ def copier_copy(tmp_path, docker_image):
     return _copy
 
 
-@pytest.fixture
-def run_in_container(docker_image):
-    """Return a helper that runs a command inside a Docker container against a generated project."""
-
-    def _run(project_path: Path, command: str, timeout: int = 300) -> subprocess.CompletedProcess:
-        cmd = [
-            "docker", "run", "--rm",
-            "-v", f"{project_path}:/project",
-            "-w", "/project",
-            docker_image,
-            "bash", "-c", command,
-        ]
-        return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-
-    return _run

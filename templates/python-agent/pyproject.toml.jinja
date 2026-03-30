@@ -55,15 +55,22 @@ dependencies = [
 {%- endif %}
 {%- endif %}
 ]
-{% if execution_model == "cli" %}
+{%- if execution_model == "cli" %}
 [project.scripts]
 {{ project_name }} = "{{ package_name }}.cli:app"
 {% endif %}
 [project.urls]
-Repository = "https://github.com/{{ author_name }}/{{ project_name }}"
+Repository = "https://github.com/{{ author_name | lower | replace(' ', '-') }}/{{ project_name }}"
 
 [tool.uv]
 exclude-newer = "1 week"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8",
+    "ty>=0.12",
+]
 
 [tool.ruff]
 target-version = "py312"

@@ -32,7 +32,7 @@ Every template asks these questions:
 
 Every template includes a `justfile` with these targets. The underlying tools vary by language but the target names are consistent.
 
-For `-web` templates, each target also has `-be` and `-fe` suffixed variants (e.g., `fmt-be`, `fmt-fe`). The unsuffixed target runs both.
+For `-web` templates with separate backend/frontend directories (e.g., `python-web`), each target also has `-be` and `-fe` suffixed variants (e.g., `fmt-be`, `fmt-fe`). The unsuffixed target runs both. Next.js-based templates (`typescript-web`, `typescript-agent` web mode) are monolithic and do not use suffixed variants.
 
 | Target | Purpose |
 | ------ | ------- |
@@ -74,7 +74,7 @@ All templates enforce a 7-day minimum release age for dependencies to reduce sup
 | --------------- | ----------- | ------- |
 | uv (Python) | `pyproject.toml` | `[tool.uv] exclude-newer = "1 week"` |
 | Bun (TS backend) | `bunfig.toml` | `minimumReleaseAge = 10080` |
-| pnpm (frontend/Next.js) | `pnpm-workspace.yaml` | `minimumReleaseAge: 10080` |
+| pnpm (frontend/Next.js) | `.npmrc` | `minimum-release-age=10080` |
 
 ## Self-Containment
 
