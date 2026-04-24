@@ -23,5 +23,6 @@ markers = [
     "typescript_service: tests for the typescript-service template",
     "typescript_web: tests for the typescript-web template",
     "typescript_agent: tests for the typescript-agent template",
+    "frontend_react: tests for the frontend-react template",
     "slow: tests that run uv sync and just gate in the generated project",
 ]

@@ -1,0 +1,79 @@
+_min_copier_version: "9.0.0"
+_subdirectory: ""
+_templates_suffix: ".jinja"
+_tasks:
+  - "{% if not is_composed %}ln -sf CLAUDE.md AGENTS.md{% else %}true{% endif %}"
+
+# Project identity
+project_name:
+  type: str
+  help: Project name (used for directory, package, and repo name)
+
+project_description:
+  type: str
+  help: One-line project description
+
+# Composability
+is_composed:
+  type: bool
+  default: false
+  help: Is this frontend composed into a parent -web template?
+
+author_name:
+  type: str
+  help: Author or organization name
+  when: "{{ not is_composed }}"
+
+author_email:
+  type: str
+  help: Author contact email
+  when: "{{ not is_composed }}"
+
+license:
+  type: str
+  help: Project license
+  default: MIT
+  choices:
+    MIT: MIT
+    Apache-2.0: Apache-2.0
+    Proprietary: Proprietary
+  when: "{{ not is_composed }}"
+
+# Optional libraries
+include_shadcn:
+  type: bool
+  default: false
+  help: Include shadcn/ui component library
+
+include_zustand:
+  type: bool
+  default: false
+  help: Include zustand for client-side state management
+
+include_recharts:
+  type: bool
+  default: false
+  help: Include recharts for data visualization
+
+include_forms:
+  type: bool
+  default: false
+  help: Include react-hook-form + zod for form handling
+
+include_tables:
+  type: bool
+  default: false
+  help: Include @tanstack/react-table
+
+# Documentation options
+include_technical_docs:
+  type: bool
+  default: false
+  help: Create docs/technical/ for TDDs and technical specs
+  when: "{{ not is_composed }}"
+
+include_product_docs:
+  type: bool
+  default: false
+  help: Create docs/product/ for PRDs and product briefs
+  when: "{{ not is_composed }}"

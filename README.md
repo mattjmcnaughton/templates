@@ -36,17 +36,20 @@ uv tool install copier
 
 ## Usage
 
-Generate a new project from a template:
+Clone the repo and generate a new project from a template:
 
 ```sh
-copier copy gh:mattjmcnaughton/templates -a -d template_name=<template-name> /path/to/destination
+git clone https://github.com/mattjmcnaughton/templates.git
+copier copy templates/templates/<template-name> /path/to/destination --trust
 ```
 
-Or from a local clone:
+For example, to scaffold a new Python service:
 
 ```sh
-copier copy /path/to/repo/templates/<template-name> /path/to/destination
+copier copy templates/templates/python-service ~/code/my-api --trust
 ```
+
+The `--trust` flag is required because the templates use [tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks) (e.g. creating symlinks).
 
 ## Repository Structure
 
