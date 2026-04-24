@@ -1,0 +1,66 @@
+# Development
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/)
+- [just](https://just.systems/)
+
+## Setup
+
+```sh
+# Install dependencies
+pnpm install
+
+# Copy environment file
+cp .env.example .env
+```
+
+## Running Locally
+
+```sh
+just dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+## Common Tasks
+
+```sh
+# Format and lint
+just fmt-fix
+just lint-fix
+
+# Type check
+just typecheck
+
+# Run tests
+just test-unit
+just test-all
+
+# Full pre-push check
+just gate
+
+# Full check including integration and e2e
+just gate-expensive
+```
+
+## Testing
+
+Tests are organized by type:
+
+- `src/**/*.test.tsx` -- Vitest, co-located unit tests
+- `tests/integration/` -- Vitest, tests with real dependencies
+- `tests/e2e/` -- Playwright, end-to-end browser tests
+
+Use `external` in test names for tests that hit external services. These run via `just test-external`.
+
+## Docker
+
+```sh
+# Build image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -p 8080:8080 {{ project_name }}
+```

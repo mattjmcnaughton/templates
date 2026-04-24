@@ -1,0 +1,59 @@
+{
+  "name": "{{ project_name }}",
+  "version": "0.1.0",
+  "description": "{{ project_description }}",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+{%- if not is_composed %}
+  "author": "{{ author_name }} <{{ author_email }}>",
+  "license": "{{ license }}",
+{%- endif %}
+  "dependencies": {
+    "react": "^19.0",
+    "react-dom": "^19.0",
+    "@tanstack/react-router": "^1.120",
+    "@tanstack/react-query": "^5.75",
+    "@tanstack/react-query-devtools": "^5.75"
+{%- if include_shadcn %},
+    "@shadcn/ui": "^0.9"
+{%- endif %}
+{%- if include_zustand %},
+    "zustand": "^5.0"
+{%- endif %}
+{%- if include_recharts %},
+    "recharts": "^2.15"
+{%- endif %}
+{%- if include_forms %},
+    "react-hook-form": "^7.54",
+    "@hookform/resolvers": "^4.1",
+    "zod": "^3.24"
+{%- endif %}
+{%- if include_tables %},
+    "@tanstack/react-table": "^8.20"
+{%- endif %}
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9",
+    "@types/react": "^19.0",
+    "@types/react-dom": "^19.0",
+    "@vitejs/plugin-react": "^4.3",
+    "@tanstack/router-devtools": "^1.120",
+    "@tanstack/router-plugin": "^1.120",
+    "typescript": "^5.7",
+    "vite": "^6.3",
+    "vitest": "^3.0",
+    "@testing-library/react": "^16.0",
+    "@testing-library/jest-dom": "^6.6",
+    "jsdom": "^26.0",
+    "@playwright/test": "^1.49",
+    "msw": "^2.7",
+    "tailwindcss": "^3.4",
+    "postcss": "^8.4",
+    "autoprefixer": "^10.4"
+  }
+}
