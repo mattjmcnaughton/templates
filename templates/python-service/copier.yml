@@ -50,6 +50,11 @@ include_clients:
   default: false
   help: Scaffold a clients/ module for external API/service clients
 
+enable_otel:
+  type: bool
+  default: false
+  help: Include OpenTelemetry tracing (OTLP exporter, FastAPI instrumentation)
+
 # Documentation options
 include_technical_docs:
   type: bool

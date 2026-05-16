@@ -26,10 +26,12 @@ dependencies = [
 {%- else %}
     "fastapi>=0.115",
     "uvicorn[standard]>=0.34",
+{%- if enable_otel %}
     "opentelemetry-api>=1.20",
     "opentelemetry-sdk>=1.20",
     "opentelemetry-instrumentation-fastapi>=0.44b0",
     "opentelemetry-exporter-otlp>=1.20",
+{%- endif %}
 {%- endif %}
 {%- if agent_framework == "pydantic-ai" %}
     "pydantic-ai>=0.1",
@@ -44,14 +46,11 @@ dependencies = [
     "alembic>=1.13",
 {%- if database_type == "postgres" %}
     "asyncpg>=0.29",
-{%- if execution_model != "cli" %}
-    "opentelemetry-instrumentation-sqlalchemy>=0.44b0",
-{%- endif %}
 {%- elif database_type == "sqlite" %}
     "aiosqlite>=0.20",
-{%- if execution_model != "cli" %}
-    "opentelemetry-instrumentation-sqlalchemy>=0.44b0",
 {%- endif %}
+{%- if execution_model != "cli" and enable_otel %}
+    "opentelemetry-instrumentation-sqlalchemy>=0.44b0",
 {%- endif %}
 {%- endif %}
 ]

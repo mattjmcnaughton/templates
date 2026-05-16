@@ -23,18 +23,21 @@ dependencies = [
     "uvicorn[standard]>=0.34",
     "structlog>=24.0",
     "pydantic-settings>=2.0",
+{%- if enable_otel %}
     "opentelemetry-api>=1.20",
     "opentelemetry-sdk>=1.20",
     "opentelemetry-instrumentation-fastapi>=0.44b0",
     "opentelemetry-exporter-otlp>=1.20",
+{%- endif %}
 {%- if include_database %}
     "sqlalchemy[asyncio]>=2.0",
     "alembic>=1.13",
 {%- if database_type == "postgres" %}
     "asyncpg>=0.29",
-    "opentelemetry-instrumentation-sqlalchemy>=0.44b0",
 {%- elif database_type == "sqlite" %}
     "aiosqlite>=0.20",
+{%- endif %}
+{%- if enable_otel %}
     "opentelemetry-instrumentation-sqlalchemy>=0.44b0",
 {%- endif %}
 {%- endif %}

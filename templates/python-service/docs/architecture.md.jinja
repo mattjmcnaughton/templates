@@ -11,7 +11,9 @@ src/{{ package_name }}/
   app.py               # FastAPI app factory
   config.py            # Pydantic-settings config from env vars
   logging.py           # structlog setup
+{%- if enable_otel %}
   telemetry.py         # OpenTelemetry setup
+{%- endif %}
   routers/             # HTTP endpoint definitions
     health.py          # /healthz, /readyz
   controllers/         # Request orchestration
@@ -61,7 +63,9 @@ DTOs (Pydantic models) are used at the router and controller level for API I/O. 
 | uvicorn | ASGI server |
 | structlog | Structured logging |
 | pydantic-settings | Configuration |
+{%- if enable_otel %}
 | OpenTelemetry | Distributed tracing |
+{%- endif %}
 {%- if include_database %}
 | SQLAlchemy | Async ORM |
 | Alembic | Database migrations |
