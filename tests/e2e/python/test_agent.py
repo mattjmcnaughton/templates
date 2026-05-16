@@ -30,7 +30,7 @@ CLI_FILES = [
 ]
 
 SERVICE_FILES = [
-    f"src/{PKG}/app.py", f"src/{PKG}/telemetry.py",
+    f"src/{PKG}/app.py",
     f"src/{PKG}/routers/__init__.py", f"src/{PKG}/routers/health.py",
     f"src/{PKG}/controllers/__init__.py",
     f"src/{PKG}/dtos/__init__.py",
@@ -163,7 +163,7 @@ class TestClaudeAgentSdkService:
         assert "claude-code-sdk" in content
         assert "fastapi" in content
         assert "uvicorn" in content
-        assert "opentelemetry-api" in content
+        assert "opentelemetry" not in content
         assert "typer" not in content
 
     def test_agent_example(self):
@@ -365,3 +365,76 @@ class TestClaudeAgentSdkCliSqlite:
     def test_no_otel_deps(self):
         content = (self.dest / "pyproject.toml").read_text()
         assert "opentelemetry" not in content
+
+
+class TestServiceOtelEnabled:
+    """python-agent in service mode with enable_otel=True."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self, copier_copy):
+        self.dest = copier_copy(
+            TEMPLATE,
+            dest_name="svc-otel",
+            agent_framework="pydantic-ai",
+            execution_model="service",
+            include_database=True,
+            database_type="postgres",
+            include_clients=False,
+            enable_otel=True,
+            include_technical_docs=False,
+            include_product_docs=False,
+            **BASE_ANSWERS,
+        )
+
+    def test_telemetry_file_exists(self):
+        assert_files_exist(self.dest, [f"src/{PKG}/telemetry.py"])
+
+    def test_otel_deps(self):
+        content = (self.dest / "pyproject.toml").read_text()
+        assert "opentelemetry-api" in content
+        assert "opentelemetry-instrumentation-fastapi" in content
+        assert "opentelemetry-instrumentation-sqlalchemy" in content
+
+    def test_app_calls_setup_telemetry(self):
+        content = (self.dest / f"src/{PKG}/app.py").read_text()
+        assert "setup_telemetry(app)" in content
+
+    def test_env_has_otel_endpoint(self):
+        content = (self.dest / ".env.example").read_text()
+        assert "OTEL_EXPORTER_OTLP_ENDPOINT=" in content
+
+    def test_no_raw_jinja(self):
+        assert_no_raw_jinja(self.dest)
+
+
+class TestServiceOtelDisabledByDefault:
+    """python-agent in service mode with default (enable_otel=False)."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self, copier_copy):
+        self.dest = copier_copy(
+            TEMPLATE,
+            dest_name="svc-no-otel",
+            agent_framework="pydantic-ai",
+            execution_model="service",
+            include_database=False,
+            include_clients=False,
+            include_technical_docs=False,
+            include_product_docs=False,
+            **BASE_ANSWERS,
+        )
+
+    def test_telemetry_absent(self):
+        assert_files_absent(self.dest, [f"src/{PKG}/telemetry.py"])
+
+    def test_no_otel_deps(self):
+        content = (self.dest / "pyproject.toml").read_text()
+        assert "opentelemetry" not in content
+
+    def test_app_no_setup_telemetry(self):
+        content = (self.dest / f"src/{PKG}/app.py").read_text()
+        assert "setup_telemetry" not in content
+
+    def test_env_no_otel(self):
+        content = (self.dest / ".env.example").read_text()
+        assert "OTEL_EXPORTER_OTLP_ENDPOINT" not in content

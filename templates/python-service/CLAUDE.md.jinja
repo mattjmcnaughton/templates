@@ -2,7 +2,7 @@
 
 {{ project_description }}
 
-Python service using FastAPI, uvicorn, OpenTelemetry, uv, ruff, ty, and pytest.
+Python service using FastAPI, uvicorn{% if enable_otel %}, OpenTelemetry{% endif %}, uv, ruff, ty, and pytest.
 
 ## Quick Reference
 
@@ -29,7 +29,9 @@ src/{{ package_name }}/
   app.py                    # FastAPI app factory
   config.py                 # Pydantic-settings based config
   logging.py                # structlog setup
+{%- if enable_otel %}
   telemetry.py              # OpenTelemetry setup
+{%- endif %}
   routers/                  # HTTP endpoint definitions
     health.py               # /healthz, /readyz
   controllers/              # Request orchestration

@@ -2,7 +2,7 @@
 
 {{ project_description }}
 
-Python agent using {{ agent_framework }}{% if execution_model == "cli" %}, typer{% else %}, FastAPI, uvicorn, OpenTelemetry{% endif %}, uv, ruff, ty, and pytest.
+Python agent using {{ agent_framework }}{% if execution_model == "cli" %}, typer{% else %}, FastAPI, uvicorn{% if enable_otel %}, OpenTelemetry{% endif %}{% endif %}, uv, ruff, ty, and pytest.
 
 ## Quick Reference
 
@@ -52,7 +52,9 @@ src/{{ package_name }}/
   commands/                 # CLI subcommands
 {%- else %}
   app.py                    # FastAPI app factory
+{%- if enable_otel %}
   telemetry.py              # OpenTelemetry setup
+{%- endif %}
   routers/                  # HTTP endpoint definitions
     health.py               # /healthz, /readyz
   controllers/              # Request orchestration
