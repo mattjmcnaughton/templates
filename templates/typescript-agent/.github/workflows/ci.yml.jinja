@@ -33,7 +33,7 @@ jobs:
         run: bun install --frozen-lockfile
 {% endif %}
       - name: Install just
-        uses: extractions/setup-just@v2
+        run: sudo apt-get update && sudo apt-get install -y just
 
       - name: Run gate-expensive
         run: just gate-expensive
