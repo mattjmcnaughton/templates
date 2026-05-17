@@ -19,10 +19,10 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --dev
+        run: uv sync --dev --frozen
 
       - name: Install just
-        uses: extractions/setup-just@v2
+        run: sudo apt-get update && sudo apt-get install -y just
 
       - name: Run gate-expensive
         run: just gate-expensive
