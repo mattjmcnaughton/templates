@@ -13,7 +13,7 @@ CORE_FILES = [
     "pyproject.toml", "justfile", "CLAUDE.md", "README.md", "LICENSE",
     ".editorconfig", ".gitignore", ".env.example",
     ".github/workflows/ci.yml",
-    "Dockerfile", "docker-compose.yml",
+    "Dockerfile", ".dockerignore", "docker-compose.yml",
     f"src/{PKG}/__init__.py", f"src/{PKG}/py.typed",
     f"src/{PKG}/app.py", f"src/{PKG}/config.py",
     f"src/{PKG}/logging.py",

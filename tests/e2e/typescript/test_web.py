@@ -14,7 +14,7 @@ CORE_FILES = [
     "justfile", "CLAUDE.md", "README.md", "LICENSE",
     ".editorconfig", ".gitignore", ".env.example",
     ".github/workflows/ci.yml",
-    "Dockerfile", "docker-compose.yml",
+    "Dockerfile", ".dockerignore", "docker-compose.yml",
     "src/app/layout.tsx", "src/app/page.tsx", "src/app/globals.css",
     "src/app/api/health/route.ts",
     "src/components/.gitkeep", "src/hooks/.gitkeep",
