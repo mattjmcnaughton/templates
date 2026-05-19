@@ -1,0 +1,41 @@
+# Git
+.git/
+.gitignore
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.override.yml
+
+# Excluded from production image
+tests/
+docs/
+.github/
