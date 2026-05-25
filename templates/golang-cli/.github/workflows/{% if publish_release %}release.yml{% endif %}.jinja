@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-binaries:
+    name: {% raw %}Build ${{ matrix.asset-name }}{% endraw %}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset-name: {{ project_name }}-linux-x86_64
+            goos: linux
+            goarch: amd64
+          - asset-name: {{ project_name }}-linux-arm64
+            goos: linux
+            goarch: arm64
+          - asset-name: {{ project_name }}-macos-x86_64
+            goos: darwin
+            goarch: amd64
+          - asset-name: {{ project_name }}-macos-arm64
+            goos: darwin
+            goarch: arm64
+
+    steps:
+      - name: Checkout code
+        # actions/checkout v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Go
+        # actions/setup-go v5.5.0
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5
+        with:
+          go-version: "{{ go_version }}"
+          cache: true
+
+      - name: Build binary
+        env:
+          CGO_ENABLED: "0"
+          {% raw %}GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}{% endraw %}
+        run: >
+          go build
+          -trimpath
+          -ldflags "-s -w -X {{ module_path }}/internal/version.Version={% raw %}${{ github.ref_name }}{% endraw %}"
+          -o {% raw %}${{ matrix.asset-name }}{% endraw %}
+          ./cmd/{{ project_name }}
+
+      - name: Package binary
+        run: {% raw %}tar czf ${{ matrix.asset-name }}.tar.gz ${{ matrix.asset-name }}{% endraw %}
+
+      - name: Upload to release
+        # softprops/action-gh-release v2.4.1
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090
+        with:
+          files: |
+            {% raw %}${{ matrix.asset-name }}
+            ${{ matrix.asset-name }}.tar.gz{% endraw %}

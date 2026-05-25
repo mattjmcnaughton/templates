@@ -1,0 +1,54 @@
+_min_copier_version: "9.0.0"
+_subdirectory: ""
+_templates_suffix: ".jinja"
+_tasks:
+  - "ln -sf CLAUDE.md AGENTS.md"
+
+# Project identity
+project_name:
+  type: str
+  help: Project name (used for directory, binary, and repo name)
+
+project_description:
+  type: str
+  help: One-line project description
+
+author_name:
+  type: str
+  help: Author or organization name
+
+author_email:
+  type: str
+  help: Author contact email
+
+license:
+  type: str
+  help: Project license
+  default: MIT
+  choices:
+    MIT: MIT
+    Apache-2.0: Apache-2.0
+    Proprietary: Proprietary
+
+# Go-specific
+module_path:
+  type: str
+  help: "Go module path (e.g. github.com/your-username/{{ project_name }})"
+  default: "github.com/your-username/{{ project_name }}"
+
+go_version:
+  type: str
+  help: Go version
+  default: "1.25.0"
+
+# Template-specific
+publish_release:
+  type: bool
+  default: false
+  help: Include GitHub Actions workflow for publishing releases with GoReleaser
+
+# Derived values
+package_name:
+  type: str
+  default: "{{ project_name | lower | replace('-', '_') | replace(' ', '_') }}"
+  when: false

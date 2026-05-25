@@ -1,0 +1,45 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Installation
+
+```sh
+go install {{ module_path }}/cmd/{{ project_name }}@latest
+```
+
+Or build from source:
+
+```sh
+git clone <repo>
+cd {{ project_name }}
+go mod tidy
+just build
+```
+
+## Usage
+
+```sh
+{{ project_name }} --help
+{{ project_name }} example [name]
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `{{ project_name | upper | replace('-', '_') }}_LOG_LEVEL` | `info` | Log level (debug, info, warn, error) |
+
+## Development
+
+See [docs/development.md](docs/development.md) for setup instructions and common tasks.
+
+## License
+
+{% if license == "MIT" -%}
+MIT — see [LICENSE](LICENSE).
+{% elif license == "Apache-2.0" -%}
+Apache 2.0 — see [LICENSE](LICENSE).
+{% elif license == "Proprietary" -%}
+Proprietary — see [LICENSE](LICENSE).
+{% endif %}
