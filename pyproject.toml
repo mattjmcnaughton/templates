@@ -24,5 +24,6 @@ markers = [
     "typescript_web: tests for the typescript-web template",
     "typescript_agent: tests for the typescript-agent template",
     "frontend_react: tests for the frontend-react template",
+    "golang_cli: tests for the golang-cli template",
     "slow: tests that run uv sync and just gate in the generated project",
 ]

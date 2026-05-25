@@ -1,0 +1,7 @@
+package version
+
+// Version is the current version of {{ project_name }}.
+// Override at build time with:
+//
+//	go build -ldflags "-X {{ module_path }}/internal/version.Version=x.y.z" ./cmd/{{ project_name }}
+var Version = "dev"

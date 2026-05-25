@@ -36,8 +36,8 @@ def assert_no_raw_jinja(path: Path):
     extensionless_check = {"justfile", "Dockerfile", "Makefile", "Procfile"}
     for file in path.rglob("*"):
         if file.is_file() and (file.suffix in extensions or file.name in extensionless_check):
-            # Skip GitHub Actions workflows — they legitimately use ${{ }}
             rel = file.relative_to(path)
+            # Skip GitHub Actions workflows — they legitimately use ${{ }}
             if rel.parts[:2] == (".github", "workflows"):
                 continue
             content = file.read_text()
