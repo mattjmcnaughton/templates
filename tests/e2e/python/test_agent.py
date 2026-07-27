@@ -163,7 +163,7 @@ class TestClaudeAgentSdkService:
 
     def test_claude_sdk_deps(self):
         content = (self.dest / "pyproject.toml").read_text()
-        assert "claude-code-sdk" in content
+        assert "claude-agent-sdk" in content
         assert "fastapi" in content
         assert "uvicorn" in content
         assert "opentelemetry" not in content
@@ -171,7 +171,7 @@ class TestClaudeAgentSdkService:
 
     def test_agent_example(self):
         content = (self.dest / f"src/{PKG}/agents/example.py").read_text()
-        assert "claude_code_sdk" in content
+        assert "claude_agent_sdk" in content
 
     def test_env_has_api_key(self):
         content = (self.dest / ".env.example").read_text()
@@ -370,7 +370,7 @@ class TestClaudeAgentSdkCliSqlite:
         content = (self.dest / "pyproject.toml").read_text()
         assert "aiosqlite" in content
         assert "asyncpg" not in content
-        assert "claude-code-sdk" in content
+        assert "claude-agent-sdk" in content
 
     def test_sqlite_env(self):
         content = (self.dest / ".env.example").read_text()
