@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests.e2e.helpers import BASE_ANSWERS, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
+from tests.e2e.helpers import BASE_ANSWERS, assert_exclude_newer_stamped, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
 
 pytestmark = pytest.mark.python_agent
 
@@ -89,6 +89,9 @@ class TestPydanticAiCli:
 
     def test_no_raw_jinja(self):
         assert_no_raw_jinja(self.dest)
+
+    def test_exclude_newer_is_concrete(self):
+        assert_exclude_newer_stamped(self.dest)
 
     def test_agents_symlink(self):
         assert_symlink(self.dest, "AGENTS.md", "CLAUDE.md")

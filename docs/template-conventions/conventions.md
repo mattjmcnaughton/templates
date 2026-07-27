@@ -72,9 +72,21 @@ All templates enforce a 7-day minimum release age for dependencies to reduce sup
 
 | Package Manager | Config File | Setting |
 | --------------- | ----------- | ------- |
-| uv (Python) | `pyproject.toml` | `[tool.uv] exclude-newer = "1 week"` |
+| uv (Python) | `pyproject.toml` | `[tool.uv] exclude-newer = "<scaffold date - 7d>T00:00:00Z"` |
 | Bun (TS backend) | `bunfig.toml` | `minimumReleaseAge = 10080` |
 | pnpm (frontend/Next.js) | `.npmrc` | `minimum-release-age=10080` |
+
+Bun and pnpm express this as a relative window, so their config is static. uv's
+`exclude-newer` takes a **concrete RFC 3339 timestamp** — a relative string like
+`"1 week"` is not portable: uv versions without duration support fail to parse it
+and silently discard the entire `[tool.uv]` table, leaving resolution completely
+unpinned while the config still looks pinned.
+
+Python templates therefore ship a `@MIN_RELEASE_AGE_CUTOFF@` placeholder in
+`pyproject.toml` and stamp it with `scaffold date - 7 days` from a `_tasks` entry
+in `copier.yml`. Generated projects bump the cutoff themselves when they
+deliberately take newer dependencies. This requires `copier copy --trust`, which
+the templates already need for the `AGENTS.md` symlink task.
 
 ## Self-Containment
 

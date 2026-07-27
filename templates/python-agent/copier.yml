@@ -3,6 +3,11 @@ _subdirectory: ""
 _templates_suffix: ".jinja"
 _tasks:
   - "ln -sf CLAUDE.md AGENTS.md"
+  - >-
+    python3 -c "import datetime, pathlib;
+    p = pathlib.Path('pyproject.toml');
+    cutoff = (datetime.datetime.now(datetime.timezone.utc).date() - datetime.timedelta(days=7)).isoformat() + 'T00:00:00Z';
+    p.write_text(p.read_text().replace('@MIN_RELEASE_AGE_CUTOFF@', cutoff))"
 
 # Project identity
 project_name:

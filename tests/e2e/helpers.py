@@ -1,5 +1,7 @@
 """Shared helpers and constants for template e2e tests."""
 
+import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 JINJA_ARTIFACTS = ["{{", "}}", "{%", "%}", "{#", "#}"]
@@ -49,6 +51,23 @@ def assert_no_raw_jinja(path: Path):
                 assert artifact not in content, (
                     f"Raw Jinja artifact '{artifact}' found in {rel}"
                 )
+
+
+def assert_exclude_newer_stamped(path: Path):
+    """Assert ``[tool.uv] exclude-newer`` is a concrete RFC 3339 timestamp.
+
+    uv silently discards the whole ``[tool.uv]`` table when it cannot parse this
+    value, so a relative string like ``"1 week"`` leaves resolution unpinned.
+    """
+    content = (path / "pyproject.toml").read_text()
+    match = re.search(r'^exclude-newer = "([^"]+)"$', content, re.MULTILINE)
+    assert match, "pyproject.toml has no [tool.uv] exclude-newer setting"
+    value = match.group(1)
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", value), (
+        f"exclude-newer must be a concrete RFC 3339 timestamp, got {value!r}"
+    )
+    cutoff = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    assert cutoff <= datetime.now(UTC), "exclude-newer cutoff must not be in the future"
 
 
 def assert_symlink(path: Path, link_name: str, target: str):
