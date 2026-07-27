@@ -39,3 +39,7 @@ gate: fmt vet test
 
 # Full check
 gate-expensive: gate test-integration
+
+# Install dependencies and prepare the project for development
+bootstrap:
+    go mod download

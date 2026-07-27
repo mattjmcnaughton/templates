@@ -48,4 +48,9 @@ gate-external: gate-expensive test-external
 
 # Install dependencies and prepare the project for development
 bootstrap:
+    #!/usr/bin/env bash
+    set -euo pipefail
     bun install
+    if [ -f prisma/schema.prisma ]; then
+        bunx prisma generate
+    fi

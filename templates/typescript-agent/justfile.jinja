@@ -49,7 +49,12 @@ gate-external: gate-expensive test-external
 
 # Install dependencies and prepare the project for development
 bootstrap:
+    #!/usr/bin/env bash
+    set -euo pipefail
     pnpm install
+    if [ -f prisma/schema.prisma ]; then
+        pnpm exec prisma generate
+    fi
 
 # Start dev server
 dev:
@@ -105,7 +110,12 @@ gate-external: gate-expensive test-external
 
 # Install dependencies and prepare the project for development
 bootstrap:
+    #!/usr/bin/env bash
+    set -euo pipefail
     bun install
+    if [ -f prisma/schema.prisma ]; then
+        bunx prisma generate
+    fi
 {%- if execution_model == "service" %}
 # Start dev server
 dev:
