@@ -44,3 +44,12 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+
+# Frontend (scaffolded into web/frontend/ from the frontend-react template,
+# whose own .gitignore is suppressed when it is composed into this project)
+node_modules/
+dist/
+*.tsbuildinfo
+routeTree.gen.ts
+test-results/
+playwright-report/
