@@ -27,7 +27,7 @@ CORE_FILES = [
 ]
 
 DB_FILES = [
-    "alembic.ini", "alembic/env.py", "alembic/versions/.gitkeep",
+    "alembic.ini", "alembic/env.py", "alembic/script.py.mako", "alembic/versions/.gitkeep",
     f"src/{PKG}/db.py",
     f"src/{PKG}/models/__init__.py",
     f"src/{PKG}/repositories/__init__.py",
@@ -162,6 +162,18 @@ class TestPostgres:
         assert "python:3.12-slim" in content
         assert "USER app" in content
 
+
+    def test_alembic_uses_async_driver(self):
+        content = (self.dest / "alembic/env.py").read_text()
+        assert "async_engine_from_config" in content
+        assert "run_sync" in content
+        # The URL must not be downgraded to a sync driver the project lacks.
+        assert 'replace("+asyncpg"' not in content
+        assert "engine_from_config(\n" not in content
+
+    def test_alembic_versions_are_committed(self):
+        content = (self.dest / ".gitignore").read_text()
+        assert "alembic/versions/*.py" not in content
 
 class TestSqlite:
     """python-service with SQLite DB, no clients."""

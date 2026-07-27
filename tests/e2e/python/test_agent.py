@@ -46,7 +46,7 @@ WEB_FILES = [
 ]
 
 DB_FILES = [
-    "alembic.ini", "alembic/env.py", "alembic/versions/.gitkeep",
+    "alembic.ini", "alembic/env.py", "alembic/script.py.mako", "alembic/versions/.gitkeep",
     f"src/{PKG}/db.py",
     f"src/{PKG}/models/__init__.py",
     f"src/{PKG}/repositories/__init__.py",
@@ -300,6 +300,17 @@ class TestPydanticAiServicePostgres:
         content = (self.dest / "docker-compose.yml").read_text()
         assert "postgres:16" in content
 
+
+    def test_alembic_uses_async_driver(self):
+        content = (self.dest / "alembic/env.py").read_text()
+        assert "async_engine_from_config" in content
+        assert "run_sync" in content
+        # The URL must not be downgraded to a sync driver the project lacks.
+        assert 'replace("+asyncpg"' not in content
+
+    def test_alembic_versions_are_committed(self):
+        content = (self.dest / ".gitignore").read_text()
+        assert "alembic/versions/*.py" not in content
 
 class TestPydanticAiCliPublish:
     """python-agent with pydantic-ai + cli + publish_to_pypi."""
