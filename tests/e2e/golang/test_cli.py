@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests.e2e.helpers import BASE_ANSWERS, assert_files_absent, assert_files_exist, assert_no_raw_jinja
+from tests.e2e.helpers import BASE_ANSWERS, assert_bootstrap_target, assert_files_absent, assert_files_exist, assert_no_raw_jinja
 
 pytestmark = pytest.mark.golang_cli
 
@@ -17,7 +17,7 @@ CORE_FILES = [
     "AGENTS.md",
     "README.md",
     "LICENSE",
-    ".editorconfig",
+    ".copier-answers.yml", ".editorconfig",
     ".gitignore",
     ".env.example",
     ".github/workflows/ci.yml",
@@ -56,6 +56,9 @@ class TestMinimal:
 
     def test_no_raw_jinja(self):
         assert_no_raw_jinja(self.dest)
+
+    def test_bootstrap_target(self):
+        assert_bootstrap_target(self.dest)
 
     def test_go_mod_module_path(self):
         content = (self.dest / "go.mod").read_text()

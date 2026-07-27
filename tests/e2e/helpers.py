@@ -77,3 +77,27 @@ def assert_symlink(path: Path, link_name: str, target: str):
     assert str(link.readlink()) == target, (
         f"{link_name} points to {link.readlink()}, expected {target}"
     )
+
+
+def assert_bootstrap_target(path: Path):
+    """Assert the justfile declares the conventional ``bootstrap`` target."""
+    content = (path / "justfile").read_text()
+    assert re.search(r"^bootstrap:", content, re.MULTILINE), (
+        "justfile has no bootstrap target"
+    )
+
+
+def assert_suites_have_tests(path: Path, suites: list[str]):
+    """Assert every listed test directory contains at least one test file.
+
+    An empty suite makes pytest exit 5 and ``bun test`` exit 1, which turns a
+    freshly scaffolded project's CI red on its first commit.
+    """
+    for suite in suites:
+        directory = path / "tests" / suite
+        assert directory.is_dir(), f"missing test suite: {suite}"
+        found = [
+            f for f in directory.iterdir()
+            if f.is_file() and ("test" in f.name or "spec" in f.name) and f.name != "__init__.py"
+        ]
+        assert found, f"test suite {suite} ships no tests"

@@ -15,11 +15,11 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
       - name: Install just
         run: sudo apt-get update && sudo apt-get install -y just
+
+      - name: Bootstrap
+        run: just bootstrap
 
       - name: Run gate-expensive
         run: just gate-expensive
