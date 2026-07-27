@@ -1,0 +1,20 @@
+/**
+ * Smoke test for the integration suite.
+ *
+ * Exercises the jsdom environment and the testing-library setup wired up in
+ * tests/setup.ts. Replace this with tests that render real routes against
+ * msw-backed API responses.
+ */
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+function Heading() {
+  return <h1>{{ '{' }}"{{ project_name }}"{{ '}' }}</h1>;
+}
+
+describe("the render harness", () => {
+  it("mounts a component and matches on accessible roles", () => {
+    render(<Heading />);
+    expect(screen.getByRole("heading", { name: "{{ project_name }}" })).toBeInTheDocument();
+  });
+});

@@ -1,5 +1,7 @@
 """Shared helpers and constants for template e2e tests."""
 
+import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 JINJA_ARTIFACTS = ["{{", "}}", "{%", "%}", "{#", "#}"]
@@ -51,6 +53,23 @@ def assert_no_raw_jinja(path: Path):
                 )
 
 
+def assert_exclude_newer_stamped(path: Path):
+    """Assert ``[tool.uv] exclude-newer`` is a concrete RFC 3339 timestamp.
+
+    uv silently discards the whole ``[tool.uv]`` table when it cannot parse this
+    value, so a relative string like ``"1 week"`` leaves resolution unpinned.
+    """
+    content = (path / "pyproject.toml").read_text()
+    match = re.search(r'^exclude-newer = "([^"]+)"$', content, re.MULTILINE)
+    assert match, "pyproject.toml has no [tool.uv] exclude-newer setting"
+    value = match.group(1)
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", value), (
+        f"exclude-newer must be a concrete RFC 3339 timestamp, got {value!r}"
+    )
+    cutoff = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    assert cutoff <= datetime.now(UTC), "exclude-newer cutoff must not be in the future"
+
+
 def assert_symlink(path: Path, link_name: str, target: str):
     """Assert link_name is a symlink pointing to target."""
     link = path / link_name
@@ -58,3 +77,27 @@ def assert_symlink(path: Path, link_name: str, target: str):
     assert str(link.readlink()) == target, (
         f"{link_name} points to {link.readlink()}, expected {target}"
     )
+
+
+def assert_bootstrap_target(path: Path):
+    """Assert the justfile declares the conventional ``bootstrap`` target."""
+    content = (path / "justfile").read_text()
+    assert re.search(r"^bootstrap:", content, re.MULTILINE), (
+        "justfile has no bootstrap target"
+    )
+
+
+def assert_suites_have_tests(path: Path, suites: list[str]):
+    """Assert every listed test directory contains at least one test file.
+
+    An empty suite makes pytest exit 5 and ``bun test`` exit 1, which turns a
+    freshly scaffolded project's CI red on its first commit.
+    """
+    for suite in suites:
+        directory = path / "tests" / suite
+        assert directory.is_dir(), f"missing test suite: {suite}"
+        found = [
+            f for f in directory.iterdir()
+            if f.is_file() and ("test" in f.name or "spec" in f.name) and f.name != "__init__.py"
+        ]
+        assert found, f"test suite {suite} ships no tests"

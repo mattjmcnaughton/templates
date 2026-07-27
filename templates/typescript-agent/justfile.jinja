@@ -1,42 +1,42 @@
 {%- if execution_model == "web" %}
 # Check formatting
 fmt:
-    pnpm biome format --check .
+    pnpm run fmt
 
 # Fix formatting
 fmt-fix:
-    pnpm biome format --write .
+    pnpm run fmt-fix
 
 # Check linting
 lint:
-    pnpm biome lint .
+    pnpm run lint
 
 # Fix linting
 lint-fix:
-    pnpm biome lint --write .
+    pnpm run lint-fix
 
 # Run type checker
 typecheck:
-    pnpm tsc --noEmit
+    pnpm run typecheck
 
 # Run all tests
 test-all: test-unit test-integration test-e2e
 
 # Run unit tests
 test-unit:
-    pnpm vitest run tests/unit
+    pnpm run test
 
 # Run integration tests
 test-integration:
-    pnpm vitest run tests/integration
+    pnpm run test-integration
 
 # Run e2e tests
 test-e2e:
-    pnpm exec playwright test
+    pnpm run test-e2e
 
 # Run tests that hit external services
 test-external:
-    pnpm vitest run -t external
+    pnpm run test-external
 
 # Fast pre-push check
 gate: fmt lint typecheck test-unit
@@ -47,48 +47,57 @@ gate-expensive: gate test-integration test-e2e
 # Everything including external
 gate-external: gate-expensive test-external
 
+# Install dependencies and prepare the project for development
+bootstrap:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    pnpm install
+    if [ -f prisma/schema.prisma ]; then
+        pnpm exec prisma generate
+    fi
+
 # Start dev server
 dev:
-    pnpm next dev
+    pnpm run dev
 {%- else %}
 # Check formatting
 fmt:
-    bunx biome format --check .
+    bun run fmt
 
 # Fix formatting
 fmt-fix:
-    bunx biome format --write .
+    bun run fmt-fix
 
 # Check linting
 lint:
-    bunx biome lint .
+    bun run lint
 
 # Fix linting
 lint-fix:
-    bunx biome lint --write .
+    bun run lint-fix
 
 # Run type checker
 typecheck:
-    bunx tsc --noEmit
+    bun run typecheck
 
 # Run all tests
 test-all: test-unit test-integration test-e2e
 
 # Run unit tests
 test-unit:
-    bun test tests/unit
+    bun run test
 
 # Run integration tests
 test-integration:
-    bun test tests/integration
+    bun run test-integration
 
 # Run e2e tests
 test-e2e:
-    bun test tests/e2e
+    bun run test-e2e
 
 # Run tests that hit external services
 test-external:
-    bun test --grep external
+    bun run test-external
 
 # Fast pre-push check
 gate: fmt lint typecheck test-unit
@@ -98,10 +107,18 @@ gate-expensive: gate test-integration test-e2e
 
 # Everything including external
 gate-external: gate-expensive test-external
-{%- if execution_model == "service" %}
 
+# Install dependencies and prepare the project for development
+bootstrap:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    bun install
+    if [ -f prisma/schema.prisma ]; then
+        bunx prisma generate
+    fi
+{%- if execution_model == "service" %}
 # Start dev server
 dev:
-    bun --watch src/index.ts
+    bun run dev
 {%- endif %}
 {%- endif %}

@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests.e2e.helpers import BASE_ANSWERS, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
+from tests.e2e.helpers import BASE_ANSWERS, assert_suites_have_tests, assert_bootstrap_target, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
 
 pytestmark = pytest.mark.typescript_web
 
@@ -12,7 +12,7 @@ CORE_FILES = [
     "package.json", "tsconfig.json", "biome.json", ".npmrc",
     "next.config.ts", "tailwind.config.ts", "postcss.config.js",
     "justfile", "CLAUDE.md", "README.md", "LICENSE",
-    ".editorconfig", ".gitignore", ".env.example",
+    ".copier-answers.yml", ".editorconfig", ".gitignore", ".env.example",
     ".github/workflows/ci.yml",
     "Dockerfile", ".dockerignore", "docker-compose.yml",
     "src/app/layout.tsx", "src/app/page.tsx", "src/app/globals.css",
@@ -62,6 +62,12 @@ class TestMinimal:
 
     def test_no_raw_jinja(self):
         assert_no_raw_jinja(self.dest)
+
+    def test_bootstrap_target(self):
+        assert_bootstrap_target(self.dest)
+
+    def test_every_suite_ships_tests(self):
+        assert_suites_have_tests(self.dest, ['unit', 'integration', 'e2e'])
 
     def test_agents_symlink(self):
         assert_symlink(self.dest, "AGENTS.md", "CLAUDE.md")

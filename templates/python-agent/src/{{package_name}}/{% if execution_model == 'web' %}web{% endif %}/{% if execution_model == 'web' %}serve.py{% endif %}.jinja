@@ -15,4 +15,6 @@ def mount_frontend(app: FastAPI) -> None:
     as static files. In development, the frontend dev server runs separately.
     """
     if FRONTEND_DIST.is_dir():
-        app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+        app.mount(
+            "/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend"
+        )

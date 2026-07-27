@@ -36,7 +36,7 @@ dependencies = [
 {%- if agent_framework == "pydantic-ai" %}
     "pydantic-ai>=0.1",
 {%- elif agent_framework == "claude-agent-sdk" %}
-    "claude-code-sdk>=0.1",
+    "claude-agent-sdk>=0.2",
 {%- elif agent_framework == "langchain" %}
     "langchain>=0.3",
     "langchain-core>=0.3",
@@ -62,13 +62,23 @@ dependencies = [
 Repository = "https://github.com/{{ author_name | lower | replace(' ', '-') }}/{{ project_name }}"
 
 [tool.uv]
-exclude-newer = "1 week"
+# Supply-chain hardening: refuse to resolve any distribution published less than
+# seven days before this project was scaffolded. uv requires a concrete RFC 3339
+# timestamp here -- relative values such as "1 week" are silently dropped (older
+# uv versions fail to parse the whole [tool.uv] table), which leaves resolution
+# completely unpinned while looking pinned. The cutoff below is stamped at
+# scaffold time; bump it deliberately when you want newer dependencies.
+exclude-newer = "@MIN_RELEASE_AGE_CUTOFF@"
 
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+{%- if execution_model != 'cli' %}
+    # Provides the HTTP backend that starlette's TestClient needs.
+    "starlette[full]",
+{%- endif %}
     "ruff>=0.8",
-    "ty>=0.12",
+    "ty>=0.0.60",
 ]
 
 [tool.ruff]

@@ -31,5 +31,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y just
 
+      - name: Bootstrap
+        run: just bootstrap
+
       - name: Run gate
         run: just gate

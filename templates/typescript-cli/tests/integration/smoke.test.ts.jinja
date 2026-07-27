@@ -1,0 +1,15 @@
+/**
+ * Smoke test for the integration suite.
+ *
+ * Replace this with tests that exercise real dependencies.
+ */
+import { describe, expect, it } from "bun:test";
+
+import { exampleCommand } from "../../src/commands/example.js";
+
+describe("the example command", () => {
+  it("is registered with a name and description", () => {
+    expect(exampleCommand.name()).toBeTruthy();
+    expect(exampleCommand.description()).toBeTruthy();
+  });
+});

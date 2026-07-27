@@ -9,9 +9,9 @@ from {{ package_name }}.routers import health
 {%- if enable_otel %}
 from {{ package_name }}.telemetry import setup_telemetry
 {%- endif %}
-{% if execution_model == "web" %}
+{%- if execution_model == "web" %}
 from {{ package_name }}.web.serve import mount_frontend
-{% endif %}
+{%- endif %}
 
 
 @asynccontextmanager
@@ -29,13 +29,13 @@ def create_app() -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
-{% if enable_otel %}
+{%- if enable_otel %}
     setup_telemetry(app)
-{% endif %}
+{%- endif %}
     app.include_router(health.router)
-{% if execution_model == "web" %}
+{%- if execution_model == "web" %}
     mount_frontend(app)
-{% endif %}
+{%- endif %}
 
     return app
 

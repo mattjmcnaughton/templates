@@ -1,0 +1,15 @@
+/**
+ * Smoke test for the e2e suite.
+ *
+ * Replace this with tests that exercise the project end to end.
+ */
+import { describe, expect, it } from "bun:test";
+
+describe("the CLI entry point", () => {
+  it("renders help", async () => {
+    const proc = Bun.spawn(["bun", "src/index.ts", "--help"], { stdout: "pipe", stderr: "pipe" });
+    const stdout = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(stdout).toContain("{{ project_name }}");
+  });
+});

@@ -35,8 +35,8 @@ Thumbs.db
 .env.local
 
 # Alembic
-alembic/versions/*.py
-!alembic/versions/.gitkeep
+# Migration scripts under alembic/versions/ are source, not build output --
+# they must be committed so every environment applies the same schema history.
 
 # SQLite
 *.db

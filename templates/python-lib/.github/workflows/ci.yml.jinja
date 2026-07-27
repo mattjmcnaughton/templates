@@ -18,11 +18,11 @@ jobs:
       - name: Set up Python
         run: uv python install 3.12
 
-      - name: Install dependencies
-        run: uv sync --dev
-
       - name: Install just
         run: sudo apt-get update && sudo apt-get install -y just
+
+      - name: Bootstrap
+        run: just bootstrap
 
       - name: Run gate-expensive
         run: just gate-expensive

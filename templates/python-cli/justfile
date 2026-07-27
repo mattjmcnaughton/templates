@@ -45,3 +45,7 @@ gate-expensive: gate test-integration test-e2e
 
 # Everything including external
 gate-external: gate-expensive test-external
+
+# Install dependencies and prepare the project for development
+bootstrap:
+    uv sync --dev

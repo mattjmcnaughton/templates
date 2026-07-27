@@ -75,7 +75,9 @@ tests/
 {%- if execution_model == "cli" %}
 - **Commands** are thin I/O wrappers. Parse CLI args, call the agent, format output.
 {%- else %}
-- **Layering:** routers -> controllers -> services (agents live in services layer).
+- **Layering:** routers -> controllers -> services{% if include_database %} -> repositories{% endif %} (agents live in the services layer).
+  {% if include_clients %}`clients/` sits beside the data layer and is called from `services/`. {% endif %}`controllers/`, `services/` and `dtos/` ship empty — add the first module
+  when you add the first feature.
 - **DTOs** are zod schemas for API I/O, always separate from DB models.
 {%- endif %}
 - Tests are organized by type in `tests/unit/`, `tests/integration/`, `tests/e2e/`.

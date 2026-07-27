@@ -1,0 +1,33 @@
+{% if execution_model == 'cli' %}"""Smoke test for the e2e suite.
+
+Replace this with tests that drive the installed CLI the way a user would.
+"""
+
+import subprocess
+
+
+def test_installed_entry_point_runs() -> None:
+    """The console script declared in pyproject.toml is on PATH and runs."""
+    result = subprocess.run(
+        ["{{ project_name }}", "--help"], capture_output=True, text=True, check=False
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip()
+{% else %}"""Smoke test for the e2e suite.
+
+Replace this with tests that exercise the running application end to end.
+"""
+
+from fastapi.testclient import TestClient
+
+from {{ package_name }}.app import app
+
+
+def test_app_starts_and_serves_its_schema() -> None:
+    """Exercise the full lifespan, including logging configuration."""
+    with TestClient(app) as client:
+        assert client.get("/healthz").status_code == 200
+        schema = client.get("/openapi.json")
+    assert schema.status_code == 200
+    assert "/healthz" in schema.json()["paths"]
+{% endif %}

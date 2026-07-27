@@ -1,0 +1,16 @@
+"""Smoke test for the e2e suite.
+
+Replace this with tests that exercise the project the way a consumer would.
+"""
+
+import subprocess
+import sys
+
+
+def test_package_imports_in_a_clean_interpreter() -> None:
+    script = "import {{ package_name }}; print({{ package_name }}.__version__)"
+    result = subprocess.run(
+        [sys.executable, "-c", script], capture_output=True, text=True, check=False
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip()

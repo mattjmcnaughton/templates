@@ -53,7 +53,9 @@ tests/
 ## Key Conventions
 
 - Source code lives in `src/`.
-- **Layering:** routers -> controllers -> services.
+- **Layering:** routers -> controllers -> services{% if include_database %} -> repositories{% endif %}. {% if include_clients %}`clients/` sits beside the data layer and is called from `services/`. {% endif %}`controllers/`, `services/` and `dtos/` ship empty — add the first module
+  when you add the first feature. `routers/health.py` deliberately answers
+  directly: a liveness probe has no business logic to orchestrate.
 - **DTOs** are zod schemas for API I/O, always separate from DB models.
 - Health endpoints are always available at `/healthz` and `/readyz`.
 - Tests are organized by type in `tests/unit/`, `tests/integration/`, `tests/e2e/`.

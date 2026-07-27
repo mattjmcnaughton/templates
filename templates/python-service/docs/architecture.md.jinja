@@ -50,6 +50,11 @@ routers (HTTP endpoints, parse requests into DTOs)
 
 DTOs (Pydantic models) are used at the router and controller level for API I/O. They are always separate from database models.
 
+A fresh scaffold ships these directories empty apart from `routers/health.py`,
+which answers directly rather than routing through a controller — a liveness
+probe has no business logic to orchestrate. Add the first controller, service
+and DTO alongside the first real feature.
+
 ## Toolchain
 
 | Tool | Purpose |

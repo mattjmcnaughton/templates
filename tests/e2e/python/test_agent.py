@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests.e2e.helpers import BASE_ANSWERS, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
+from tests.e2e.helpers import BASE_ANSWERS, assert_suites_have_tests, assert_bootstrap_target, assert_exclude_newer_stamped, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
 
 pytestmark = pytest.mark.python_agent
 
@@ -12,7 +12,7 @@ PKG = "my_test_project"
 # Files present regardless of execution model
 COMMON_FILES = [
     "pyproject.toml", "justfile", "CLAUDE.md", "README.md", "LICENSE",
-    ".editorconfig", ".gitignore", ".env.example",
+    ".copier-answers.yml", ".editorconfig", ".gitignore", ".env.example",
     ".github/workflows/ci.yml",
     f"src/{PKG}/__init__.py", f"src/{PKG}/py.typed",
     f"src/{PKG}/config.py", f"src/{PKG}/logging.py",
@@ -46,7 +46,7 @@ WEB_FILES = [
 ]
 
 DB_FILES = [
-    "alembic.ini", "alembic/env.py", "alembic/versions/.gitkeep",
+    "alembic.ini", "alembic/env.py", "alembic/script.py.mako", "alembic/versions/.gitkeep",
     f"src/{PKG}/db.py",
     f"src/{PKG}/models/__init__.py",
     f"src/{PKG}/repositories/__init__.py",
@@ -89,6 +89,15 @@ class TestPydanticAiCli:
 
     def test_no_raw_jinja(self):
         assert_no_raw_jinja(self.dest)
+
+    def test_bootstrap_target(self):
+        assert_bootstrap_target(self.dest)
+
+    def test_every_suite_ships_tests(self):
+        assert_suites_have_tests(self.dest, ['unit', 'integration', 'e2e'])
+
+    def test_exclude_newer_is_concrete(self):
+        assert_exclude_newer_stamped(self.dest)
 
     def test_agents_symlink(self):
         assert_symlink(self.dest, "AGENTS.md", "CLAUDE.md")
@@ -160,7 +169,7 @@ class TestClaudeAgentSdkService:
 
     def test_claude_sdk_deps(self):
         content = (self.dest / "pyproject.toml").read_text()
-        assert "claude-code-sdk" in content
+        assert "claude-agent-sdk" in content
         assert "fastapi" in content
         assert "uvicorn" in content
         assert "opentelemetry" not in content
@@ -168,7 +177,7 @@ class TestClaudeAgentSdkService:
 
     def test_agent_example(self):
         content = (self.dest / f"src/{PKG}/agents/example.py").read_text()
-        assert "claude_code_sdk" in content
+        assert "claude_agent_sdk" in content
 
     def test_env_has_api_key(self):
         content = (self.dest / ".env.example").read_text()
@@ -298,6 +307,17 @@ class TestPydanticAiServicePostgres:
         assert "postgres:16" in content
 
 
+    def test_alembic_uses_async_driver(self):
+        content = (self.dest / "alembic/env.py").read_text()
+        assert "async_engine_from_config" in content
+        assert "run_sync" in content
+        # The URL must not be downgraded to a sync driver the project lacks.
+        assert 'replace("+asyncpg"' not in content
+
+    def test_alembic_versions_are_committed(self):
+        content = (self.dest / ".gitignore").read_text()
+        assert "alembic/versions/*.py" not in content
+
 class TestPydanticAiCliPublish:
     """python-agent with pydantic-ai + cli + publish_to_pypi."""
 
@@ -356,7 +376,7 @@ class TestClaudeAgentSdkCliSqlite:
         content = (self.dest / "pyproject.toml").read_text()
         assert "aiosqlite" in content
         assert "asyncpg" not in content
-        assert "claude-code-sdk" in content
+        assert "claude-agent-sdk" in content
 
     def test_sqlite_env(self):
         content = (self.dest / ".env.example").read_text()

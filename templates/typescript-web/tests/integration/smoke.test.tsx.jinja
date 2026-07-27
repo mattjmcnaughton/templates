@@ -1,0 +1,17 @@
+/**
+ * Smoke test for the integration suite.
+ *
+ * Exercises the jsdom environment and the React render pipeline. Replace this
+ * with tests that render real pages against mocked API responses.
+ */
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import Home from "@/app/page";
+
+describe("the home page", () => {
+  it("renders its heading", () => {
+    render(<Home />);
+    expect(screen.getByRole("heading", { name: "{{ project_name }}" })).toBeInTheDocument();
+  });
+});

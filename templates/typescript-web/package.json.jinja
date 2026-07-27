@@ -3,10 +3,22 @@
   "version": "0.1.0",
   "description": "{{ project_description }}",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild", "sharp"]
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "fmt": "biome format .",
+    "fmt-fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint-fix": "biome lint --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run tests/unit --passWithNoTests",
+    "test-integration": "vitest run tests/integration --passWithNoTests",
+    "test-e2e": "playwright test --pass-with-no-tests",
+    "test-external": "vitest run -t external --passWithNoTests"
   },
   "author": "{{ author_name }} <{{ author_email }}>",
   "license": "{{ license }}",
@@ -55,6 +67,8 @@
     "vitest": "^3.0",
     "@vitejs/plugin-react": "^4.3",
     "@testing-library/react": "^16.0",
+    "@testing-library/jest-dom": "^6.6",
+    "jsdom": "^26.0",
     "@playwright/test": "^1.49"
 {%- if include_database %},
     "prisma": "^6.0"

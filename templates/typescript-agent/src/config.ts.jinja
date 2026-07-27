@@ -1,14 +1,21 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  LOG_LEVEL: z.string().default("INFO").transform((v) => v.toLowerCase()),
+  LOG_LEVEL: z
+    .string()
+    .default("INFO")
+    .transform((v) => v.toLowerCase()),
 {%- if execution_model != "cli" %}
   HOST: z.string().default("0.0.0.0"),
   PORT: z.coerce.number().default(3000),
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional(),
 {%- endif %}
 {%- if include_database %}
-  DATABASE_URL: z.string(),
+{%- if database_type == "postgres" %}
+  DATABASE_URL: z.string().default("postgresql://postgres:postgres@localhost:5432/{{ project_name }}"),
+{%- else %}
+  DATABASE_URL: z.string().default("file:./{{ project_name }}.db"),
+{%- endif %}
 {%- endif %}
 });
 

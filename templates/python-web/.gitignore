@@ -35,8 +35,8 @@ Thumbs.db
 .env.local
 
 # Alembic
-alembic/versions/*.py
-!alembic/versions/.gitkeep
+# Migration scripts under alembic/versions/ are source, not build output --
+# they must be committed so every environment applies the same schema history.
 
 # SQLite
 *.db
@@ -44,3 +44,12 @@ alembic/versions/*.py
 
 # Docker
 docker-compose.override.yml
+
+# Frontend (scaffolded into web/frontend/ from the frontend-react template,
+# whose own .gitignore is suppressed when it is composed into this project)
+node_modules/
+dist/
+*.tsbuildinfo
+routeTree.gen.ts
+test-results/
+playwright-report/

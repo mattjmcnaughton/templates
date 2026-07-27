@@ -1,5 +1,20 @@
 fe_dir := "src/{{ package_name }}/web/frontend"
 
+# Run a script from the frontend's package.json.
+#
+# The frontend is scaffolded separately (see the README in {{ "{{" }}fe_dir{{ "}}" }}), so a
+# freshly generated backend has no package.json there yet. Skip cleanly in that
+# case rather than failing every -fe target and turning first-commit CI red.
+[private]
+fe script:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -f "{{ "{{" }}fe_dir{{ "}}" }}/package.json" ]; then
+        echo "no frontend scaffolded in {{ "{{" }}fe_dir{{ "}}" }}/ -- skipping {{ "{{" }}script{{ "}}" }}"
+        exit 0
+    fi
+    cd "{{ "{{" }}fe_dir{{ "}}" }}" && pnpm run "{{ "{{" }}script{{ "}}" }}"
+
 # Check formatting (backend + frontend)
 fmt: fmt-be fmt-fe
 
@@ -8,8 +23,7 @@ fmt-be:
     uv run ruff format --check .
 
 # Check frontend formatting
-fmt-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run fmt
+fmt-fe: (fe "fmt")
 
 # Fix formatting (backend + frontend)
 fmt-fix: fmt-fix-be fmt-fix-fe
@@ -19,8 +33,7 @@ fmt-fix-be:
     uv run ruff format .
 
 # Fix frontend formatting
-fmt-fix-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run fmt-fix
+fmt-fix-fe: (fe "fmt-fix")
 
 # Check linting (backend + frontend)
 lint: lint-be lint-fe
@@ -30,8 +43,7 @@ lint-be:
     uv run ruff check .
 
 # Check frontend linting
-lint-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run lint
+lint-fe: (fe "lint")
 
 # Fix linting (backend + frontend)
 lint-fix: lint-fix-be lint-fix-fe
@@ -41,8 +53,7 @@ lint-fix-be:
     uv run ruff check --fix .
 
 # Fix frontend linting
-lint-fix-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run lint-fix
+lint-fix-fe: (fe "lint-fix")
 
 # Run type checker (backend + frontend)
 typecheck: typecheck-be typecheck-fe
@@ -52,8 +63,7 @@ typecheck-be:
     uv run ty check
 
 # Run frontend type checker
-typecheck-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run typecheck
+typecheck-fe: (fe "typecheck")
 
 # Run all tests
 test-all: test-unit test-integration test-e2e
@@ -66,8 +76,7 @@ test-unit-be:
     uv run pytest tests/unit
 
 # Run frontend unit tests
-test-unit-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run test
+test-unit-fe: (fe "test")
 
 # Run integration tests
 test-integration:
@@ -96,13 +105,29 @@ gate-expensive: gate test-integration test-e2e
 # Everything including external
 gate-external: gate-expensive test-external
 
+# Install dependencies and prepare the project for development
+bootstrap: bootstrap-be bootstrap-fe
+
+# Install backend dependencies
+bootstrap-be:
+    uv sync --dev
+
+# Install frontend dependencies
+bootstrap-fe:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -f "{{ "{{" }}fe_dir{{ "}}" }}/package.json" ]; then
+        echo "no frontend scaffolded in {{ "{{" }}fe_dir{{ "}}" }}/ -- skipping"
+        exit 0
+    fi
+    cd "{{ "{{" }}fe_dir{{ "}}" }}" && pnpm install
+
 # Start backend dev server
 dev-be:
     uv run uvicorn {{ package_name }}.app:app --reload
 
 # Start frontend dev server
-dev-fe:
-    cd {{ "{{" }}fe_dir{{ "}}" }} && pnpm run dev
+dev-fe: (fe "dev")
 
 # Start both dev servers
 dev:

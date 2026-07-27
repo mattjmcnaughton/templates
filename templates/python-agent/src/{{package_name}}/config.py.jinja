@@ -8,16 +8,25 @@ class Settings(BaseSettings):
 
     log_level: str = "INFO"
     log_format: str = "json"
-{% if execution_model != "cli" %}
+{%- if execution_model != "cli" %}
     host: str = "0.0.0.0"
     port: int = 8000
-{% if enable_otel %}
+{%- if enable_otel %}
     otel_exporter_otlp_endpoint: str = "http://localhost:4318"
-{% endif %}
-{% endif %}
-{% if include_database %}
-    database_url: str = "{{ 'sqlite+aiosqlite:///./data.db' if database_type == 'sqlite' else 'postgresql+asyncpg://localhost:5432/' + project_name | lower | replace('-', '_') | replace(' ', '_') }}"
-{% endif %}
+{%- endif %}
+{%- endif %}
+{%- if include_database %}
+{%- set db_url = "sqlite+aiosqlite:///./data.db" if database_type == "sqlite" else "postgresql+asyncpg://postgres:postgres@localhost:5432/" + package_name %}
+{#- ruff format wraps the assignment once the rendered line passes 88 columns,
+    which depends on how long the project name is, so emit the matching form. #}
+{%- if db_url | length > 63 %}
+    database_url: str = (
+        "{{ db_url }}"
+    )
+{%- else %}
+    database_url: str = "{{ db_url }}"
+{%- endif %}
+{%- endif %}
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

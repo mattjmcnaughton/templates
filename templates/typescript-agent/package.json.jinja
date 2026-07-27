@@ -19,13 +19,34 @@
   "scripts": {
 {%- if execution_model == "cli" %}
     "build": "tsc",
-    "prepublishOnly": "tsc"
+    "prepublishOnly": "tsc",
 {%- elif execution_model == "service" %}
-    "dev": "bun --watch src/index.ts"
+    "dev": "bun --watch src/index.ts",
 {%- elif execution_model == "web" %}
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+{%- endif %}
+{%- if execution_model == "web" %}
+    "fmt": "biome format .",
+    "fmt-fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint-fix": "biome lint --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run tests/unit --passWithNoTests",
+    "test-integration": "vitest run tests/integration --passWithNoTests",
+    "test-e2e": "playwright test --pass-with-no-tests",
+    "test-external": "vitest run -t external --passWithNoTests"
+{%- else %}
+    "fmt": "biome format .",
+    "fmt-fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint-fix": "biome lint --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test tests/unit",
+    "test-integration": "bun test tests/integration",
+    "test-e2e": "bun test tests/e2e",
+    "test-external": "bun test --test-name-pattern external"
 {%- endif %}
   },
   "author": "{{ author_name }} <{{ author_email }}>",
@@ -57,13 +78,14 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.57"
 {%- endif %}
 {%- if agent_framework == "claude-agent-sdk" %},
-    "claude-code-sdk": "^1.0"
+    "@anthropic-ai/claude-agent-sdk": "^0.3"
 {%- elif agent_framework == "pi-ai" %},
-    "@mariozechner/pi-ai": "^0.1",
-    "@mariozechner/pi-agent-core": "^0.1"
+    "@mariozechner/pi-ai": "^0.73",
+    "@mariozechner/pi-agent-core": "^0.73"
 {%- elif agent_framework == "langchain-js" %},
-    "@langchain/core": "^0.3",
-    "langchain": "^0.3"
+    "@langchain/core": "^1.2",
+    "@langchain/openai": "^1.5",
+    "langchain": "^1.5"
 {%- endif %}
 {%- if include_database %},
     "@prisma/client": "^6.0"
@@ -79,6 +101,8 @@
     "vitest": "^3.0",
     "@vitejs/plugin-react": "^4.3",
     "@testing-library/react": "^16.0",
+    "@testing-library/jest-dom": "^6.6",
+    "jsdom": "^26.0",
     "@playwright/test": "^1.49"
 {%- else %},
     "@types/bun": "^1.2"

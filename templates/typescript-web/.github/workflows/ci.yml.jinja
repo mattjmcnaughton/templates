@@ -18,16 +18,18 @@ jobs:
           node-version: lts/*
 
       - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
 
       - name: Install just
         run: sudo apt-get update && sudo apt-get install -y just
+
+      - name: Bootstrap
+        run: just bootstrap
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
 
       - name: Run gate-expensive
         run: just gate-expensive

@@ -26,6 +26,8 @@ Every template asks these questions:
 | `.gitignore` | Always included (language-specific content) |
 | `.env.example` | Included for all types except lib |
 | `justfile` | Always included |
+| `.copier-answers.yml` | Always written, so generated projects can run `copier update` |
+| Test suites | Every suite ships a replaceable smoke test, so a fresh scaffold's CI is green on the first commit |
 | Minimum release age | Always configured — only allow packages released at least 7 days ago |
 
 ## Justfile Targets
@@ -36,6 +38,7 @@ For `-web` templates with separate backend/frontend directories (e.g., `python-w
 
 | Target | Purpose |
 | ------ | ------- |
+| `bootstrap` | Install dependencies and prepare the project for development |
 | `fmt` | Check formatting |
 | `fmt-fix` | Fix formatting |
 | `lint` | Check linting |
@@ -64,6 +67,12 @@ The following concerns must be kept consistent across ALL templates. When modify
 - CI/CD patterns — GitHub Actions, consistent workflow structure and naming
 - Docker conventions — base image selection, multi-stage build patterns, label schemas (service/web/agent types only)
 - Copier question naming — use the same variable names for the same concepts
+- `_answers_file` — every `copier.yml` sets it, and every template ships a
+  `{{ _copier_conf.answers_file }}.jinja` file. Setting the key alone is not enough:
+  Copier only writes the answers file if the template renders one.
+- CI workflow shape — set up the toolchain, install `just`, run `just bootstrap`,
+  then run `just gate-expensive`. Do not pass `--frozen`/`--frozen-lockfile` on the
+  install: a freshly scaffolded project has no lockfile committed yet.
 - Minimum release age — 7-day minimum across all package managers (see below)
 
 ## Minimum Release Age
@@ -72,9 +81,21 @@ All templates enforce a 7-day minimum release age for dependencies to reduce sup
 
 | Package Manager | Config File | Setting |
 | --------------- | ----------- | ------- |
-| uv (Python) | `pyproject.toml` | `[tool.uv] exclude-newer = "1 week"` |
+| uv (Python) | `pyproject.toml` | `[tool.uv] exclude-newer = "<scaffold date - 7d>T00:00:00Z"` |
 | Bun (TS backend) | `bunfig.toml` | `minimumReleaseAge = 10080` |
 | pnpm (frontend/Next.js) | `.npmrc` | `minimum-release-age=10080` |
+
+Bun and pnpm express this as a relative window, so their config is static. uv's
+`exclude-newer` takes a **concrete RFC 3339 timestamp** — a relative string like
+`"1 week"` is not portable: uv versions without duration support fail to parse it
+and silently discard the entire `[tool.uv]` table, leaving resolution completely
+unpinned while the config still looks pinned.
+
+Python templates therefore ship a `@MIN_RELEASE_AGE_CUTOFF@` placeholder in
+`pyproject.toml` and stamp it with `scaffold date - 7 days` from a `_tasks` entry
+in `copier.yml`. Generated projects bump the cutoff themselves when they
+deliberately take newer dependencies. This requires `copier copy --trust`, which
+the templates already need for the `AGENTS.md` symlink task.
 
 ## Self-Containment
 

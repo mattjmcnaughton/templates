@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests.e2e.helpers import BASE_ANSWERS, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
+from tests.e2e.helpers import BASE_ANSWERS, assert_suites_have_tests, assert_bootstrap_target, assert_files_absent, assert_files_exist, assert_no_raw_jinja, assert_symlink
 
 pytestmark = pytest.mark.typescript_agent
 
@@ -12,7 +12,7 @@ TEMPLATE = "typescript-agent"
 COMMON_FILES = [
     "package.json", "tsconfig.json", "biome.json",
     "justfile", "CLAUDE.md", "README.md", "LICENSE",
-    ".editorconfig", ".gitignore", ".env.example",
+    ".copier-answers.yml", ".editorconfig", ".gitignore", ".env.example",
     ".github/workflows/ci.yml",
     "src/agents/index.ts", "src/agents/example.ts",
     "src/tools/index.ts",
@@ -97,6 +97,12 @@ class TestClaudeAgentSdkCli:
     def test_no_raw_jinja(self):
         assert_no_raw_jinja(self.dest)
 
+    def test_bootstrap_target(self):
+        assert_bootstrap_target(self.dest)
+
+    def test_every_suite_ships_tests(self):
+        assert_suites_have_tests(self.dest, ['unit', 'integration', 'e2e'])
+
     def test_agents_symlink(self):
         assert_symlink(self.dest, "AGENTS.md", "CLAUDE.md")
 
@@ -106,7 +112,7 @@ class TestClaudeAgentSdkCli:
 
     def test_claude_sdk_deps(self):
         content = (self.dest / "package.json").read_text()
-        assert "claude-code-sdk" in content
+        assert "@anthropic-ai/claude-agent-sdk" in content
         assert "commander" in content
         assert "chalk" in content
         assert "hono" not in content
@@ -115,7 +121,7 @@ class TestClaudeAgentSdkCli:
 
     def test_agent_example(self):
         content = (self.dest / "src/agents/example.ts").read_text()
-        assert "claude-code-sdk" in content
+        assert "@anthropic-ai/claude-agent-sdk" in content
 
     def test_env_has_api_key(self):
         content = (self.dest / ".env.example").read_text()
@@ -296,7 +302,7 @@ class TestClaudeAgentSdkServicePostgres:
     def test_postgres_deps(self):
         content = (self.dest / "package.json").read_text()
         assert "@prisma/client" in content
-        assert "claude-code-sdk" in content
+        assert "@anthropic-ai/claude-agent-sdk" in content
 
     def test_postgres_env(self):
         content = (self.dest / ".env.example").read_text()

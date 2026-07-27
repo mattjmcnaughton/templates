@@ -1,21 +1,23 @@
 """Health check endpoints."""
 
+{% if include_database -%}
+from fastapi import APIRouter, Response, status
+{% else -%}
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
-
+{% endif %}
 router = APIRouter(tags=["health"])
 
 
 @router.get("/healthz")
-async def healthz() -> dict:
+async def healthz() -> dict[str, str]:
     """Liveness probe."""
     return {"status": "ok"}
 
 
+{% if include_database -%}
 @router.get("/readyz")
-async def readyz() -> dict:
-    """Readiness probe."""
-{%- if include_database %}
+async def readyz(response: Response) -> dict[str, str]:
+    """Readiness probe. Reports 503 when the database is unreachable."""
     from sqlalchemy import text
 
     from {{ package_name }}.db import async_session
@@ -24,6 +26,12 @@ async def readyz() -> dict:
         async with async_session() as session:
             await session.execute(text("SELECT 1"))
     except Exception:
-        return JSONResponse({"status": "not ready", "database": "unreachable"}, status_code=503)
-{%- endif %}
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        return {"status": "not ready", "database": "unreachable"}
     return {"status": "ready"}
+{% else -%}
+@router.get("/readyz")
+async def readyz() -> dict[str, str]:
+    """Readiness probe."""
+    return {"status": "ready"}
+{% endif -%}

@@ -1,11 +1,11 @@
 import { z } from "zod";
-{% if agent_framework == "claude-agent-sdk" %}
-import { query, type ClaudeCodeOptions } from "claude-code-sdk";
-{% elif agent_framework == "pi-ai" %}
+{%- if agent_framework == "claude-agent-sdk" %}
+import { type Options, query } from "@anthropic-ai/claude-agent-sdk";
+{%- elif agent_framework == "pi-ai" %}
 import { Agent } from "@mariozechner/pi-agent-core";
-{% elif agent_framework == "langchain-js" %}
+{%- elif agent_framework == "langchain-js" %}
 import { ChatOpenAI } from "@langchain/openai";
-{% endif %}
+{%- endif %}
 export const AgentInput = z.object({
   prompt: z.string(),
 });
@@ -17,33 +17,34 @@ export const AgentOutput = z.object({
 });
 
 export type AgentOutput = z.infer<typeof AgentOutput>;
-{% if agent_framework == "claude-agent-sdk" %}
+{%- if agent_framework == "claude-agent-sdk" %}
 export async function exampleAgent(input: AgentInput): Promise<AgentOutput> {
-  const messages = [];
+  const parts: string[] = [];
   for await (const message of query({
     prompt: input.prompt,
-    options: { maxTurns: 1 } as ClaudeCodeOptions,
+    options: { maxTurns: 1 } satisfies Options,
   })) {
-    if (message.type === "text") {
-      messages.push(message.text);
+    if (message.type === "result" && message.subtype === "success") {
+      parts.push(message.result);
     }
   }
-  return { response: messages.join("\n") };
+  return { response: parts.join("\n") };
 }
-{% elif agent_framework == "pi-ai" %}
-const agent = new Agent({
-  systemPrompt: "You are a helpful assistant.",
-});
-
+{%- elif agent_framework == "pi-ai" %}
 export async function exampleAgent(input: AgentInput): Promise<AgentOutput> {
-  const result = await agent.run(input.prompt);
-  return { response: result };
+  const agent = new Agent({
+    initialState: { systemPrompt: "You are a helpful assistant." },
+  });
+  await agent.prompt(input.prompt);
+  const last = agent.state.messages.at(-1);
+  const content = last && "content" in last ? last.content : "";
+  return { response: typeof content === "string" ? content : JSON.stringify(content) };
 }
-{% elif agent_framework == "langchain-js" %}
+{%- elif agent_framework == "langchain-js" %}
 const model = new ChatOpenAI({ modelName: "gpt-4o" });
 
 export async function exampleAgent(input: AgentInput): Promise<AgentOutput> {
   const result = await model.invoke(input.prompt);
   return { response: String(result.content) };
 }
-{% endif %}
+{%- endif %}
