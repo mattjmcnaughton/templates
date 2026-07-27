@@ -1,0 +1,11 @@
+"""Smoke test for the integration suite.
+
+Replace this with tests that exercise real dependencies.
+"""
+
+from importlib.metadata import version
+
+
+def test_package_is_installed() -> None:
+    """The distribution resolves from the environment, not just from src/."""
+    assert version("{{ project_name }}")

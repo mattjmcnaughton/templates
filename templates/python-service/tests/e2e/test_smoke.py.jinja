@@ -1,0 +1,17 @@
+"""Smoke test for the e2e suite.
+
+Replace this with tests that exercise the running application end to end.
+"""
+
+from fastapi.testclient import TestClient
+
+from {{ package_name }}.app import app
+
+
+def test_app_starts_and_serves_its_schema() -> None:
+    """Exercise the full lifespan, including logging configuration."""
+    with TestClient(app) as client:
+        assert client.get("/healthz").status_code == 200
+        schema = client.get("/openapi.json")
+    assert schema.status_code == 200
+    assert "/healthz" in schema.json()["paths"]

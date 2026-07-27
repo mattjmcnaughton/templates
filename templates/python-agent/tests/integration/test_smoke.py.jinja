@@ -1,0 +1,29 @@
+{% if execution_model == 'cli' %}"""Smoke test for the integration suite.
+
+Replace this with tests that exercise real dependencies.
+"""
+
+from typer.testing import CliRunner
+
+from {{ package_name }}.cli import app
+
+
+def test_cli_help_renders() -> None:
+    result = CliRunner().invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert "{{ project_name }}" in result.output
+{% else %}"""Smoke test for the integration suite.
+
+Replace this with tests that exercise real dependencies.
+"""
+
+from fastapi.testclient import TestClient
+
+from {{ package_name }}.app import app
+
+
+def test_healthz_reports_ok() -> None:
+    response = TestClient(app).get("/healthz")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+{% endif %}

@@ -58,6 +58,8 @@ exclude-newer = "@MIN_RELEASE_AGE_CUTOFF@"
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+    # Provides the HTTP backend that starlette's TestClient needs.
+    "starlette[full]",
     "ruff>=0.8",
     "ty>=0.0.60",
 ]

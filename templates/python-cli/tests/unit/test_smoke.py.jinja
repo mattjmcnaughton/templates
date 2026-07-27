@@ -1,0 +1,12 @@
+"""Smoke test for the unit suite.
+
+Replace this with real unit tests. Every suite ships with at least one test so
+that a freshly scaffolded project has a green quality gate from its first
+commit.
+"""
+
+from {{ package_name }} import __version__
+
+
+def test_package_exposes_a_version() -> None:
+    assert __version__
