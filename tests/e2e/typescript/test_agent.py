@@ -106,7 +106,7 @@ class TestClaudeAgentSdkCli:
 
     def test_claude_sdk_deps(self):
         content = (self.dest / "package.json").read_text()
-        assert "claude-code-sdk" in content
+        assert "@anthropic-ai/claude-agent-sdk" in content
         assert "commander" in content
         assert "chalk" in content
         assert "hono" not in content
@@ -115,7 +115,7 @@ class TestClaudeAgentSdkCli:
 
     def test_agent_example(self):
         content = (self.dest / "src/agents/example.ts").read_text()
-        assert "claude-code-sdk" in content
+        assert "@anthropic-ai/claude-agent-sdk" in content
 
     def test_env_has_api_key(self):
         content = (self.dest / ".env.example").read_text()
@@ -296,7 +296,7 @@ class TestClaudeAgentSdkServicePostgres:
     def test_postgres_deps(self):
         content = (self.dest / "package.json").read_text()
         assert "@prisma/client" in content
-        assert "claude-code-sdk" in content
+        assert "@anthropic-ai/claude-agent-sdk" in content
 
     def test_postgres_env(self):
         content = (self.dest / ".env.example").read_text()
