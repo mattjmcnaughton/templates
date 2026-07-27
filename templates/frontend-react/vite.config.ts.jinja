@@ -1,4 +1,6 @@
-import { defineConfig } from "vite";
+// `defineConfig` comes from vitest, not vite: the `test` block below is not
+// part of vite's own UserConfig and `tsc` rejects it when imported from "vite".
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
@@ -12,7 +14,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: "./tests/setup.ts",
-    include: ["src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "tests/integration/**/*.test.{ts,tsx}"],
   },
 {%- if is_composed %}
   server: {

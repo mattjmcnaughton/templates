@@ -1,0 +1,12 @@
+/**
+ * Smoke test for the e2e suite.
+ *
+ * Playwright builds the app and serves it (see playwright.config.ts) before
+ * running these. Replace this with real user journeys.
+ */
+import { expect, test } from "@playwright/test";
+
+test("the landing page renders", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "{{ project_name }}" })).toBeVisible();
+});
