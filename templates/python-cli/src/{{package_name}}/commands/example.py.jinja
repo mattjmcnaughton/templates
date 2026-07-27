@@ -19,9 +19,9 @@ class ExampleOutput:
     message: str
 
 
-def run_example(input: ExampleInput) -> ExampleOutput:
+def run_example(params: ExampleInput) -> ExampleOutput:
     """Business logic for the example command. Delegate to a service for real work."""
-    return ExampleOutput(message=f"Hello, {input.name}!")
+    return ExampleOutput(message=f"Hello, {params.name}!")
 
 
 def example(

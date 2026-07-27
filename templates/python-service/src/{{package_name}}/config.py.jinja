@@ -10,12 +10,12 @@ class Settings(BaseSettings):
     log_format: str = "json"
     host: str = "0.0.0.0"
     port: int = 8000
-{% if enable_otel %}
+{%- if enable_otel %}
     otel_exporter_otlp_endpoint: str = "http://localhost:4318"
-{% endif %}
-{% if include_database %}
+{%- endif %}
+{%- if include_database %}
     database_url: str = "{{ 'sqlite+aiosqlite:///./data.db' if database_type == 'sqlite' else 'postgresql+asyncpg://localhost:5432/' + project_name | lower | replace('-', '_') | replace(' ', '_') }}"
-{% endif %}
+{%- endif %}
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
