@@ -8,7 +8,7 @@
 {%- if execution_model == "web" %}
 import { describe, expect, it } from "vitest";
 
-import { config } from "@/lib/config";
+import { config } from "@/config";
 {%- else %}
 import { describe, expect, it } from "bun:test";
 
