@@ -6,7 +6,11 @@ const envSchema = z.object({
     .default("INFO")
     .transform((v) => v.toLowerCase()),
 {%- if include_database %}
-  DATABASE_URL: z.string(),
+{%- if database_type == "postgres" %}
+  DATABASE_URL: z.string().default("postgresql://postgres:postgres@localhost:5432/{{ project_name }}"),
+{%- else %}
+  DATABASE_URL: z.string().default("file:./{{ project_name }}.db"),
+{%- endif %}
 {%- endif %}
 });
 

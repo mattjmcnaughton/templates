@@ -11,7 +11,11 @@ const envSchema = z.object({
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional(),
 {%- endif %}
 {%- if include_database %}
-  DATABASE_URL: z.string(),
+{%- if database_type == "postgres" %}
+  DATABASE_URL: z.string().default("postgresql://postgres:postgres@localhost:5432/{{ project_name }}"),
+{%- else %}
+  DATABASE_URL: z.string().default("file:./{{ project_name }}.db"),
+{%- endif %}
 {%- endif %}
 });
 
