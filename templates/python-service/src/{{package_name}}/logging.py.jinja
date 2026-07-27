@@ -1,5 +1,7 @@
 """Structured logging configuration."""
 
+import logging
+
 import structlog
 
 from {{ package_name }}.config import settings
@@ -21,7 +23,7 @@ def configure_logging() -> None:
             renderer,
         ],
         wrapper_class=structlog.make_filtering_bound_logger(
-            structlog.get_level_from_name(settings.log_level)
+            logging.getLevelNamesMapping().get(settings.log_level.upper(), logging.INFO)
         ),
         context_class=dict,
         logger_factory=structlog.PrintLoggerFactory(),
