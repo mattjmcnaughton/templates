@@ -1,0 +1,14 @@
+/**
+ * Smoke test for the integration suite.
+ *
+ * Replace this with tests that exercise real dependencies.
+ */
+import { describe, expect, it } from "bun:test";
+
+import * as lib from "../../src/index.js";
+
+describe("the public API surface", () => {
+  it("exports at least one binding", () => {
+    expect(Object.keys(lib).length).toBeGreaterThan(0);
+  });
+});

@@ -1,41 +1,41 @@
 # Check formatting
 fmt:
-    pnpm biome format --check .
+    pnpm run fmt
 
 # Fix formatting
 fmt-fix:
-    pnpm biome format --write .
+    pnpm run fmt-fix
 
 # Check linting
 lint:
-    pnpm biome lint .
+    pnpm run lint
 
 # Fix linting
 lint-fix:
-    pnpm biome lint --write .
+    pnpm run lint-fix
 
 # Run type checker
 typecheck:
-    pnpm tsc --noEmit
+    pnpm run typecheck
 
 # Run all tests
 test-all: test-unit test-integration test-e2e
 
 # Run unit tests
 test-unit:
-    pnpm vitest run tests/unit
+    pnpm run test
 
 # Run integration tests
 test-integration:
-    pnpm vitest run tests/integration
+    pnpm run test-integration
 
 # Run e2e tests
 test-e2e:
-    pnpm exec playwright test
+    pnpm run test-e2e
 
 # Run tests that hit external services
 test-external:
-    pnpm vitest run -t external
+    pnpm run test-external
 
 # Fast pre-push check
 gate: fmt lint typecheck test-unit
@@ -46,6 +46,10 @@ gate-expensive: gate test-integration test-e2e
 # Everything including external
 gate-external: gate-expensive test-external
 
+# Install dependencies and prepare the project for development
+bootstrap:
+    pnpm install
+
 # Start dev server
 dev:
-    pnpm next dev
+    pnpm run dev

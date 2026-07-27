@@ -1,0 +1,16 @@
+/**
+ * Smoke test for the unit suite.
+ *
+ * Replace this with real unit tests. Every suite ships with at least one test
+ * so a freshly scaffolded project has a green quality gate from its first
+ * commit.
+ */
+import { describe, expect, it } from "bun:test";
+
+import { version } from "../../src/index.js";
+
+describe("{{ project_name }}", () => {
+  it("exposes a version", () => {
+    expect(version).toBeTruthy();
+  });
+});

@@ -1,0 +1,45 @@
+/**
+ * Smoke test for the e2e suite.
+ *
+ * Replace this with tests that exercise the project end to end.
+ */
+{%- if execution_model == "web" %}
+import { expect, test } from "@playwright/test";
+
+test("the landing page renders", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "{{ project_name }}" })).toBeVisible();
+});
+
+test("the health route reports ok", async ({ request }) => {
+  const response = await request.get("/api/health");
+  expect(response.status()).toBe(200);
+});
+{%- elif execution_model == "service" %}
+import { describe, expect, it } from "bun:test";
+
+import server from "../../src/index.js";
+
+describe("the server export", () => {
+  it("serves health checks over a real listener", async () => {
+    const instance = Bun.serve({ ...server, port: 0 });
+    try {
+      const res = await fetch(`http://localhost:${instance.port}/healthz`);
+      expect(res.status).toBe(200);
+    } finally {
+      await instance.stop(true);
+    }
+  });
+});
+{%- else %}
+import { describe, expect, it } from "bun:test";
+
+describe("the CLI entry point", () => {
+  it("renders help", async () => {
+    const proc = Bun.spawn(["bun", "src/index.ts", "--help"], { stdout: "pipe", stderr: "pipe" });
+    const stdout = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(stdout).toContain("{{ project_name }}");
+  });
+});
+{%- endif %}

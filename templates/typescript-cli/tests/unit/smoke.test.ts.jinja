@@ -1,0 +1,16 @@
+/**
+ * Smoke test for the unit suite.
+ *
+ * Replace this with real unit tests. Every suite ships with at least one test
+ * so a freshly scaffolded project has a green quality gate from its first
+ * commit.
+ */
+import { describe, expect, it } from "bun:test";
+
+import { config } from "../../src/config.js";
+
+describe("configuration", () => {
+  it("parses the environment through the zod schema", () => {
+    expect(config.LOG_LEVEL).toBeTruthy();
+  });
+});

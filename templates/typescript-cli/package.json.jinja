@@ -11,7 +11,16 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "tsc"
+    "prepublishOnly": "tsc",
+    "fmt": "biome format .",
+    "fmt-fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint-fix": "biome lint --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test tests/unit",
+    "test-integration": "bun test tests/integration",
+    "test-e2e": "bun test tests/e2e",
+    "test-external": "bun test --test-name-pattern external"
   },
   "author": "{{ author_name }} <{{ author_email }}>",
   "license": "{{ license }}",

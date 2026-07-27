@@ -1,41 +1,41 @@
 # Check formatting
 fmt:
-    bunx biome format --check .
+    bun run fmt
 
 # Fix formatting
 fmt-fix:
-    bunx biome format --write .
+    bun run fmt-fix
 
 # Check linting
 lint:
-    bunx biome lint .
+    bun run lint
 
 # Fix linting
 lint-fix:
-    bunx biome lint --write .
+    bun run lint-fix
 
 # Run type checker
 typecheck:
-    bunx tsc --noEmit
+    bun run typecheck
 
 # Run all tests
 test-all: test-unit test-integration test-e2e
 
 # Run unit tests
 test-unit:
-    bun test tests/unit
+    bun run test
 
 # Run integration tests
 test-integration:
-    bun test tests/integration
+    bun run test-integration
 
 # Run e2e tests
 test-e2e:
-    bun test tests/e2e
+    bun run test-e2e
 
 # Run tests that hit external services
 test-external:
-    bun test --grep external
+    bun run test-external
 
 # Fast pre-push check
 gate: fmt lint typecheck test-unit
@@ -45,3 +45,7 @@ gate-expensive: gate test-integration test-e2e
 
 # Everything including external
 gate-external: gate-expensive test-external
+
+# Install dependencies and prepare the project for development
+bootstrap:
+    bun install

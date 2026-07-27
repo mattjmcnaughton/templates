@@ -1,0 +1,16 @@
+/**
+ * Smoke test for the e2e suite.
+ *
+ * Replace this with tests that exercise the project end to end.
+ */
+import { describe, expect, it } from "bun:test";
+
+describe("{{ project_name }}", () => {
+  it("imports cleanly in a fresh process", async () => {
+    const script = 'import("./src/index.js").then((m) => console.log(m.version))';
+    const proc = Bun.spawn(["bun", "-e", script], { stdout: "pipe", stderr: "pipe" });
+    const stdout = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(stdout.trim()).toBeTruthy();
+  });
+});

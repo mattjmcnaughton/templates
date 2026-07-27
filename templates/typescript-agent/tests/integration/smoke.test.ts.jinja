@@ -1,0 +1,46 @@
+/**
+ * Smoke test for the integration suite.
+ *
+ * Replace this with tests that exercise real dependencies.
+ */
+{%- if execution_model == "web" %}
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { apiFetch } from "@/lib/api";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe("apiFetch", () => {
+  it("surfaces non-2xx responses as errors", async () => {
+    vi.stubGlobal(
+      "fetch",
+      async () => new Response("nope", { status: 500, statusText: "Server Error" }),
+    );
+    await expect(apiFetch("/api/health")).rejects.toThrow("API error: 500");
+  });
+});
+{%- elif execution_model == "service" %}
+import { describe, expect, it } from "bun:test";
+
+import { app } from "../../src/app.js";
+
+describe("GET /healthz", () => {
+  it("reports ok", async () => {
+    const res = await app.fetch(new Request("http://localhost/healthz"));
+    expect(res.status).toBe(200);
+  });
+});
+{%- else %}
+import { describe, expect, it } from "bun:test";
+
+import { exampleCommand } from "../../src/commands/example.js";
+
+describe("the example command", () => {
+  it("is registered with a name and description", () => {
+    expect(exampleCommand.name()).toBeTruthy();
+    expect(exampleCommand.description()).toBeTruthy();
+  });
+});
+{%- endif %}
